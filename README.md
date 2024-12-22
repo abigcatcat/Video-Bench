@@ -33,11 +33,11 @@
 
 # Benchmark
 
-(Table to be filled)
+(A Table to be filled)
 
 # Evaluation
 
-**Multi-Dimensional Assessment**:
+**Multi-Dimensional Assessment (add description and scale to the below table)**:
 | Dimension  |  Code Path |
 |---|---|
 | Image Quality  |  `Video-Bench/staticquality.py` |
@@ -51,7 +51,7 @@
 | Scene Consistency |`Video-Bench/VideoTextConsistency.py` |
 
 
-**Tested Models (fill in with name, year, paper link, github link, accepted paper)**:
+**Tested Models (a table with name, year, paper link, github link, accepted paper)**:
   - Lavie
   - Pika
   - Show-1
