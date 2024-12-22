@@ -23,8 +23,9 @@
 [📝Literature](#Literature) |
 [📒Leaderboard](#Leaderboard) |
 [🤗HumanAlignment](#HumanAlignment) |
-[🗃️Evaluation](#Evaluation) |
 [🛠️Installation](#Installation) |
+[🗃️Preparation](#Preparation) |
+[⚡Instructions](#Instructions) |
 [🚀Usage](#Usage) |
 [📭Citation](#Citation)
 
@@ -49,32 +50,6 @@
 # HumanAlignment
 
 (A Table to be filled)
-
-# Evaluation
-
-**Multi-Dimensional Assessment (add description and scale to the below table)**:
-| Dimension  |  Code Path |
-|---|---|
-| Image Quality  |  `Video-Bench/staticquality.py` |
-| Aesthetic Quality  | `Video-Bench/staticquality.py`  |
-| Temporal Consistency | `Video-Bench/dynamicquality.py`  |
-| Motion Effects | `Video-Bench/dynamicquality.py` |
-| Object-Class Consistency | `Video-Bench/VideoTextConsistency.py` |
-| Video-Text Consistency | `Video-Bench/VideoTextConsistency.py` |
-| Color Consistency | `Video-Bench/VideoTextConsistency.py` |
-| Action Consistency | `Video-Bench/VideoTextConsistency.py` |
-| Scene Consistency |`Video-Bench/VideoTextConsistency.py` |
-
-
-**Tested Models (a table with name, year, paper link, github link, accepted conference)**:
-  - Lavie
-  - Pika
-  - Show-1
-  - VideocrAfter2
-  - CogVideoX5B
-  - Kling
-  - Gen3
-
 
 # Installation
 
@@ -116,7 +91,7 @@
    curl -L https://huggingface.co/xxx/resolve/main/pytorch_model.bin -o ./pytorch_model.bin
    ````
 
-## Data Preparation
+# Preparation
 
 Please organize your data according to the following structure:
 ```bash
@@ -167,6 +142,22 @@ Please organize your data according to the following structure:
     │   └── ...
     └── ...
 ```
+
+# Instructions
+
+**Video-Bench enables video generation assessment from multiple dimensions (add description and scale to the below table)**:
+| Dimension  |  Code Path |
+|---|---|
+| Image Quality  |  `Video-Bench/staticquality.py` |
+| Aesthetic Quality  | `Video-Bench/staticquality.py`  |
+| Temporal Consistency | `Video-Bench/dynamicquality.py`  |
+| Motion Effects | `Video-Bench/dynamicquality.py` |
+| Object-Class Consistency | `Video-Bench/VideoTextConsistency.py` |
+| Video-Text Consistency | `Video-Bench/VideoTextConsistency.py` |
+| Color Consistency | `Video-Bench/VideoTextConsistency.py` |
+| Action Consistency | `Video-Bench/VideoTextConsistency.py` |
+| Scene Consistency |`Video-Bench/VideoTextConsistency.py` |
+
 # Usage
 Run the following command to evaluate the dimension you want to evaluate:
    ````bash
