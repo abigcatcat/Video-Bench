@@ -1,5 +1,9 @@
 # HABench: Human Preference Aligned Video Generation Benchmark
 
+<div align="center">
+    <img src="./asset/dimension.png" alt="HABench Overview" width="800"/>
+</div>
+
 HABench is a benchmark tool designed to systematically leverage MLLMs across all dimensions relevant to video generation assessment in generative models. By incorporating few-shot scoring and chain-of-query techniques, HA-Video-Bench provides a structured, scalable approach to generated video evaluation.
 
 ## Evaluation
@@ -44,6 +48,11 @@ HABench is a benchmark tool designed to systematically leverage MLLMs across all
 
 ## Installation
 
+- Install with pip
+   ````bash
+   pip install HAbench
+   ````
+- Install with conda
    ````bash
    git clone https://github.com/yourusername/HABench.git
    cd HABench
