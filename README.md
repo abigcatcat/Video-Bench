@@ -20,18 +20,33 @@
 ![Video-Recommendation](https://img.shields.io/badge/Dataset-Human--Annotation-red) 
 
 [⭐Overview](#Overview) |
-[📒Benchmark](#Benchmark) |
+[📝Literature](#Literature) |
+[📒Leaderboard](#Leaderboard) |
+[🤗HumanAlignment](#HumanAlignment) |
 [🗃️Evaluation](#Evaluation) |
 [🛠️Installation](#Installation) |
 [🚀Usage](#Usage) |
-[🤗Video Understanding Meets Recommender Systems](#Video_Understanding_Meets_Recommender_Systems) |
-[📭Citation](#Citation) |)
+[📭Citation](#Citation)
 
 # Overview
 
 <div align=center><img src="https://github.com/Video-Bench/Video-Bench/blob/main/figures/videobench.png"/></div>
 
-# Benchmark
+# Literature
+
+## Video Generation Models
+
+(A Table to be filled, providing name, year, paper link, github link, accepted conference)
+
+## Video Generation Evaluation Methods
+
+(A Table to be filled, providing name, year, paper link, github link, accepted conference)
+
+# Leaderboard
+
+(A Table to be filled)
+
+# HumanAlignment
 
 (A Table to be filled)
 
