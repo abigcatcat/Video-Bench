@@ -19,7 +19,7 @@
 ![Video-Recommendation](https://img.shields.io/badge/Task-Human--Preference--Learning-red) 
 ![Video-Recommendation](https://img.shields.io/badge/Dataset-Human--Annotation-red) 
 
-[⭐Illustration](#Illustration) |
+[⭐Overview](#Overview) |
 [📒Benchmark](#Benchmark) |
 [🗃️Evaluation](#Evaluation) |
 [🛠️Installation](#Installation) |
@@ -27,7 +27,7 @@
 [🤗Video Understanding Meets Recommender Systems](#Video_Understanding_Meets_Recommender_Systems) |
 [📭Citation](#Citation) |)
 
-# Illustration
+# Overview
 
 <div align=center><img src="https://github.com/Video-Bench/Video-Bench/blob/main/figures/videobench.png"/></div>
 
@@ -37,7 +37,7 @@
 
 # Evaluation
 
-**Multi-Dimensional Evaluation**: Supports evaluation across several key dimensions of video generation:
+**Multi-Dimensional Assessment**:
 | Dimension  |  Code Path |
 |---|---|
 | Image Quality  |  `Video-Bench/staticquality.py` |
@@ -51,7 +51,7 @@
 | Scene Consistency |`Video-Bench/VideoTextConsistency.py` |
 
 
-**Support for Multiple Video Generation Models**:
+**Tested Models (fill in with name, year, paper link, github link, accepted paper)**:
   - Lavie
   - Pika
   - Show-1
