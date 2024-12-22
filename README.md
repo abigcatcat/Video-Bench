@@ -51,7 +51,7 @@
 | Scene Consistency |`Video-Bench/VideoTextConsistency.py` |
 
 
-**Tested Models (a table with name, year, paper link, github link, accepted paper)**:
+**Tested Models (a table with name, year, paper link, github link, accepted conference)**:
   - Lavie
   - Pika
   - Show-1
