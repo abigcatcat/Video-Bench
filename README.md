@@ -45,11 +45,40 @@
 
 # Leaderboard
 
-(A Table to be filled)
+| Model            | Imaging Quality | Aesthetic Quality | Temporal Consist. | Motion Effects | Avg Rank | Video-text Consist. | Object-class Consist. | Color Consist. | Action Consist. | Scene Consist. | Avg Rank | Overall Avg Rank |
+|------------------|-----------------|-------------------|--------------------|----------------|----------|----------------------|-----------------------|----------------|-----------------|----------------|----------|------------------|
+| Cogvideox [57]   | 3.87            | 3.84              | 4.14               | 3.55           | 3.00     | **4.62**             | 2.81                 | **2.92**        | 2.81            | **2.93**       | **1.60**  | 2.22             |
+| Gen3 [42]        | **4.66**        | **4.44**          | **4.74**           | **3.99**       | **1.00** | 4.38                 | 2.81                 | 2.87            | 2.59            | **2.93**       | 2.40      | **1.78**         |
+| Kling [24]       | 4.26            | 3.82              | 4.38               | 3.11           | 2.75     | 4.07                 | 2.70                 | 2.81            | 2.50            | 2.82           | 4.60      | 3.78             |
+| VideoCrafter2 [5] | 4.08            | 3.85              | 3.69               | 2.81           | 3.75     | 4.18                 | **2.85**             | 2.90            | 2.53            | 2.78           | 2.80      | 3.22             |
+| LaVie [52]       | 3.00            | 2.94              | 3.00               | 2.43           | 7.00     | 3.71                 | 2.82                 | 2.81            | 2.45            | 2.63           | 5.00      | 5.88             |
+| PiKa-Beta [38]   | 3.78            | 3.76              | 3.40               | 2.59           | 5.50     | 3.78                 | 2.51                 | 2.52            | 2.25            | 2.60           | 6.80      | 6.22             |
+| Show-1 [60]      | 3.30            | 3.28              | 3.90               | 2.90           | 5.00     | 4.21                 | 2.82                 | 2.79            | 2.53            | 2.72           | 3.80      | 4.33             |
+
+**Notes**:
+- Higher scores indicate better performance.
+- The best score in each dimension is highlighted in **bold**.
 
 # HumanAlignment
 
-(A Table to be filled)
+| Metrics     | Benchmark      | Imaging Quality | Aesthetic Quality | Temporal Consist. | Motion Effects | Video-text Consist. | Object-class Consist. | Color Consist. | Action Consist. | Scene Consist. |
+|-------------|----------------|------------------|--------------------|--------------------|----------------|----------------------|-----------------------|----------------|-----------------|----------------|
+| MUSIQ [21]  | VBench [19]    | 0.363           | -                  | -                  | -              | -                    | -                     | -              | -               | -              |
+| LAION       | VBench [19]    | -               | 0.446              | -                  | -              | -                    | -                     | -              | -               | -              |
+| CLIP [40]   | VBench [19]    | -               | -                  | 0.260              | -              | -                    | -                     | -              | -               | -              |
+| RAFT [48]   | VBench [19]    | -               | -                  | -                  | 0.329          | -                    | -                     | -              | -               | -              |
+| Amt [28]    | VBench [19]    | -               | -                  | -                  | 0.329          | -                    | -                     | -              | -               | -              |
+| ViCLIP [53] | VBench [19]    | -               | -                  | -                  | -              | -                    | 0.445                 | -              | -               | -              |
+| UMT [27]    | VBench [19]    | -               | -                  | -                  | -              | -                    | -                     | -              | 0.411           | -              |
+| GRiT [54]   | VBench [19]    | -               | -                  | -                  | -              | -                    | -                     | -              | -               | -              |
+| Tag2Text [16]| VBench [19]   | -               | -                  | -                  | -              | 0.469                | 0.545                 | -              | -               | 0.422          |
+| ComBench [46]| ComBench [46] | -               | -                  | -                  | -              | 0.611                | 0.696                 | 0.633          | 0.633           | 0.631          |
+| **Ours**    | **Ours**       | **0.733**       | **0.702**          | **0.402**          | **0.514**      | **0.735**            | **0.750**             | **0.718**      | **0.733**       | **0.733**      |
+
+**Notes**:
+- Higher scores indicate better performance.
+- The best score in each dimension is highlighted in **bold**.
+
 
 # Installation
 
