@@ -3,7 +3,6 @@
     "GPT4o_BASE_URL" : "",      
     "GPT4o_mini_API_KEY" : "",               
     "GPT4o_mini_BASE_URL" : "",
-    "dataset_root_path": "../HABench/data/",
     "log_path_color": "../HABench/logs/color.log",
     "log_path_object_class": "../HABench/logs/object_class.log",
     "log_path_scene": "../HABench/logs/scene.log",

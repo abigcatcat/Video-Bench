@@ -16,7 +16,7 @@ def call_api(client, messages, model):
     )
     return response.choices[0].message.content
 
-def eval(config, prompt, dimension):
+def eval(config, prompt, dimension, cur_full_info_path):
     """
     Evaluate videos using OpenAI API
     Args:
@@ -40,13 +40,9 @@ def eval(config, prompt, dimension):
     )
     MODEL = "gpt-4o-2024-08-06"
 
-    # 初始化结果字典
     results = {}
+    dataset = Video_Dataset(cur_full_info_path)
     
-    # 加载数据集
-    dataset = Video_Dataset(data_dir=config['dataset_root_path'])
-    
-    # 处理每组视频
     l1 = list(range(0, len(dataset)))
     for i in l1:
         try:
@@ -55,41 +51,30 @@ def eval(config, prompt, dimension):
             frames = data['frames']
             prompten = data['prompt']
             
-            # 构建消息
+            # 构建包含所有模型帧的消息
+            model_frames_content = []
+            for model_name, model_frames in frames.items():
+                model_frames_content.extend([
+                    f"\n{len(model_frames)} frames from {model_name}\n",
+                    *map(lambda x: {"type": "image_url", 
+                                  "image_url": {"url": f'data:image/jpg;base64,{x}', "detail": "low"}}, 
+                         model_frames)
+                ])
+
             messages = [
                 {
                     "role": "system",
                     "content": prompt
                 },
                 {
-                    "role": "user", "content": [
-                        "These are the frames from the video.The prompt is '{}'.".format(prompten),
-                        "12 frames from cogvideox5b \n ", 
-                        *map(lambda x: {"type": "image_url", 
-                                        "image_url": {"url": f'data:image/jpg;base64,{x}', "detail": "low"}}, frames['cogvideox5b']),
-                        "10 frames from kling \n ", 
-                        *map(lambda x: {"type": "image_url", 
-                                        "image_url": {"url": f'data:image/jpg;base64,{x}', "detail": "low"}}, frames['kling']),
-                        "20 frames from gen3 \n ", 
-                        *map(lambda x: {"type": "image_url", 
-                                        "image_url": {"url": f'data:image/jpg;base64,{x}', "detail": "low"}}, frames['gen3']),
-                        " 4 frames from videocrafter2 \n ",
-                        *map(lambda x: {"type": "image_url", 
-                                        "image_url": {"url": f'data:image/jpg;base64,{x}', "detail": "low"}}, frames['videocrafter2']),   
-                        "\n 7 frames from pika \n",
-                        *map(lambda x: {"type": "image_url", 
-                                        "image_url": {"url": f'data:image/jpg;base64,{x}', "detail": "low"}}, frames['pika']),
-                        "\n 8 frames from show1\n ",
-                        *map(lambda x: {"type": "image_url", 
-                                        "image_url": {"url":    f'data:image/jpg;base64,{x}', "detail": "low"}}, frames['show1']),                             
-                        "\n5 frames from lavie\n ",
-                        *map(lambda x: {"type": "image_url", 
-                                        "image_url": {"url": f'data:image/jpg;base64,{x}', "detail": "low"}},frames['lavie']),
-                                                                ], 
-            }
+                    "role": "user", 
+                    "content": [
+                        f"These are the frames from the video. The prompt is '{prompten}'.",
+                        *model_frames_content
+                    ]
+                }
             ]
 
-            # 调用 API 并获取结果
             response = call_api(client, messages, MODEL)
             results[str(i)] = response
             
