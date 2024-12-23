@@ -1,4 +1,3 @@
-
 import os
 from HAbench import HABench
 from datetime import datetime
@@ -6,7 +5,6 @@ import argparse
 import json
 
 def parse_args():
-
     CUR_DIR = os.path.dirname(os.path.abspath(__file__))
     parser = argparse.ArgumentParser(description='HABench', formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument(
@@ -30,7 +28,7 @@ def parse_args():
     parser.add_argument(
         "--full_json_dir",
         type=str,
-        default=f'{CUR_DIR}/HAbench/HABench_full_info.json',
+        default=os.path.join(CUR_DIR, "HAbench", "HABench_full.json"),
         help="path to save the json file that contains the prompt and dimension information",
     )
     parser.add_argument(
@@ -48,21 +46,29 @@ def parse_args():
     parser.add_argument(
         "--mode",
         type=str,
-        default='vbench_standard',
-        choices=['vbench_standard', 'custom_input'],
-        help="evaluation mode: vbench_standard or custom_input",
+        default='HAbench_standard',
+        choices=['HAbench_standard', 'custom_input_consistency', 'custom_input_nonconsistency'],
+        help="evaluation mode: HAbench_standard or custom_input",
+    )
+    parser.add_argument(
+        "--prompt",
+        type=str,
+        default="None",
+        help="""Specify the input prompt
+        If not specified, filenames will be used as input prompts
+        * Mutually exclusive to --prompt_file.
+        ** This option must be used with --mode=custom_input flag
+        """
     )
     parser.add_argument(
         "--prompt_file",
         type=str,
         default=None,
-        help="JSON file containing prompt mappings for custom videos. Format: {'video_path': 'prompt'}",
-    )
-    parser.add_argument(
-        "--prompt_list",
-        type=json.loads,
-        default={},
-        help='JSON string of prompt mappings. Format: {"video_path": "prompt"}',
+        help="""Specify the path of the file that contains prompt lists
+        If not specified, filenames will be used as input prompts
+        * Mutually exclusive to --prompt.
+        ** This option must be used with --mode=custom_input flag
+        """
     )
     args = parser.parse_args()
     return args
@@ -72,12 +78,17 @@ def main():
     args = parse_args()
     HAVBench = HABench(args.full_json_dir, args.output_path, args.config_path)
 
-    current_time = datetime.now().strftime('%Y-%m-%d-%H:%M:%S')
-
-    prompt_list = args.prompt_list
+    # 处理提示词
+    prompt_list = {}
     if args.prompt_file and os.path.exists(args.prompt_file):
+        # 从文件加载提示词映射
         with open(args.prompt_file, 'r') as f:
             prompt_list = json.load(f)
+            if not isinstance(prompt_list, dict):
+                raise ValueError("Prompt file must contain a dictionary mapping extracted prompts to actual prompts")
+    elif args.prompt != "None":
+        # 使用单个提示词
+        prompt_list = args.prompt
 
     kwargs = {
         'mode': args.mode,
@@ -86,9 +97,9 @@ def main():
 
     dimension_str = args.dimension[0]
     HAVBench.evaluate(
-        videos_path = args.videos_path,
-        name = f'results_{dimension_str}',
-        dimension_list = args.dimension,
+        videos_path=args.videos_path,
+        name=f'results_{dimension_str}',
+        dimension_list=args.dimension,
         **kwargs
     )
     print('done')

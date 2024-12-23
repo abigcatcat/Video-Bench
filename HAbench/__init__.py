@@ -39,12 +39,31 @@ class HABench(object):
         """Build full info JSON file containing video paths and prompts"""
         cur_full_info_list = []
         
-        if mode == 'custom_input':
+        # 定义维度映射关系
+        dimension_mapping = {
+            'aesthetic_quality': 'overall_consistency',
+            'imaging_quality': 'overall_consistency',
+            'temporal_consistency': 'action',
+            'motion_effects': 'action',
+            'overall_consistency': 'overall_consistency',
+            'action': 'action',
+            'color': 'color',
+            'object_class': 'object_class',
+            'scene': 'scene'
+        }
+        
+        if mode == 'custom_input_consistency':
             self.check_dimension_requires_extra_info(dimension_list)
-            if os.path.isfile(videos_path):
+            
+            # 获取实际的数据目录
+            actual_dimensions = set(dimension_mapping[dim] for dim in dimension_list)
+            
+            # if os.path.isfile(videos_path):
+            if os.path.isdir(videos_path) and len([f for f in os.listdir(videos_path) if os.path.isdir(os.path.join(videos_path, f))]) == 1:
                 # Single video file
                 model_name = os.path.basename(os.path.dirname(videos_path))
-                prompt = get_prompt_from_filename(videos_path) if not prompt_list else prompt_list[videos_path]
+                full_name = f"{model_name}/{os.path.basename(videos_path)}"
+                prompt = get_prompt_from_filename(full_name) if not prompt_list else prompt_list.get(full_name, get_prompt_from_filename(full_name))
                 videos_dict = {model_name: os.path.abspath(videos_path)}
                 cur_full_info_list = [{
                     "prompt_en": prompt,
@@ -53,24 +72,33 @@ class HABench(object):
                 }]
             else:
                 # Directory containing videos
-                video_names = os.listdir(videos_path)
                 videos_by_prompt = {}
 
-                # Group videos by prompt
-                for filename in video_names:
-                    if Path(filename).suffix.lower() not in ['.mp4', '.gif', '.jpg', '.png']:
-                        continue
-                        
-                    video_path = os.path.abspath(os.path.join(videos_path, filename))
-                    model_name = os.path.basename(os.path.dirname(video_path))
-                    prompt = get_prompt_from_filename(filename)
-                    if prompt_list:
-                        prompt = prompt_list.get(video_path, prompt)
-                    
-                    if prompt not in videos_by_prompt:
-                        videos_by_prompt[prompt] = {}
-                    videos_by_prompt[prompt][model_name] = video_path
-
+                # 遍历每个实际维度目录
+                for actual_dim in actual_dimensions:
+                    dimension_path = os.path.join(videos_path, actual_dim)
+                    if os.path.exists(dimension_path):
+                        for model_name in os.listdir(dimension_path):
+                            model_path = os.path.join(dimension_path, model_name)
+                            if os.path.isdir(model_path):
+                                for video_name in os.listdir(model_path):
+                                    if Path(video_name).suffix.lower() in ['.mp4', '.gif', '.jpg', '.png']:
+                                        video_path = os.path.join(dimension_path, model_name, video_name)
+                                        extracted_prompt = get_prompt_from_filename(video_name)
+                                        
+                                        # 在prompt_list中查找匹配的prompt
+                                        matched_prompt = None
+                                        if prompt_list:
+                                            for prompt_key, prompt_value in prompt_list.items():
+                                                if extracted_prompt in prompt_key or prompt_key in extracted_prompt:
+                                                    matched_prompt = prompt_value
+                                                    break
+                                        
+                                        prompt = matched_prompt if matched_prompt else extracted_prompt
+                                        
+                                        if prompt not in videos_by_prompt:
+                                            videos_by_prompt[prompt] = {}
+                                        videos_by_prompt[prompt][model_name] = video_path.replace("\\", "/")
                 # Create info list entries
                 for prompt, videos in videos_by_prompt.items():
                     cur_full_info_list.append({
@@ -78,25 +106,45 @@ class HABench(object):
                         "dimension": dimension_list,
                         "videos": videos
                     })
+        
+        elif mode == 'custom_input_nonconsistency':
+
+            print('custom_input_nonconsistency')
 
         else:
             # Standard mode using benchmark data
             full_info_list = load_json(self.full_info_dir)
             
             for prompt_dict in full_info_list:
-                if set(dimension_list) & set([prompt_dict["dimension"]]):
+                # 检查是否有任何请求的维度在这个提示词的维度列表中
+                if any(dim in dimension_list for dim in prompt_dict["dimension"]):
                     prompt = prompt_dict['prompt']
-                    # 为每个提示词创建3个视频的条目
-                    for idx in range(3):  # 0, 1, 2
-                        videos_dict = {}
-                        for model in ['cogvideox5b', 'kling', 'gen3', 'videocrafter2', 'pika', 'show1', 'lavie']:
-                            video_path = os.path.join(
-                                prompt_dict['dimension'],
-                                model,
-                                f"{prompt}_{idx}.mp4"
-                            )
-                            videos_dict[model] = os.path.join(videos_path, video_path)
-                        
+                    videos_dict = {}
+                    
+                    # 获取实际的数据目录
+                    actual_dimensions = set(dimension_mapping[dim] for dim in dimension_list 
+                                         if dim in prompt_dict["dimension"])
+                    
+                    # 遍历每个实际维度目录
+                    for actual_dim in actual_dimensions:
+                        dimension_path = os.path.join(videos_path, actual_dim)
+                        if os.path.exists(dimension_path):
+                            # 获取该维度下的所有模型目录
+                            for model_name in os.listdir(dimension_path):
+                                model_path = os.path.join(dimension_path, model_name)
+                                if os.path.isdir(model_path):
+                                    # 检查三个索引的视频
+                                    for idx in range(3):
+                                        video_name = f"{prompt}_{idx}.mp4"
+                                        video_path = os.path.join(dimension_path, model_name, video_name)
+                                        if os.path.exists(video_path):
+                                            videos_dict[model_name] = video_path.replace("\\", "/")
+                                            if verbose:
+                                                print(f'Successfully found video: {video_path}')
+                                        elif verbose:
+                                            print(f'WARNING!!! Required video not found: {video_path}')
+                    
+                    if videos_dict:  # 只有当找到视频时才添加到列表中
                         cur_full_info_list.append({
                             "prompt_en": prompt,
                             "dimension": dimension_list,

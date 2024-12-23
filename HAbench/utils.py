@@ -17,7 +17,7 @@ class Video_Dataset:
         with open(self.json_path, 'r') as f:
             return json.load(f)
 
-    def _extract_frames(self, video_path, extract_frames_persecond, resize_fx, resize_fy):
+    def extract_frames(self, video_path, extract_frames_persecond, resize_fx, resize_fy):
         """Extract frames from a video file"""
         frames = []
         video = cv2.VideoCapture(video_path)
@@ -62,7 +62,7 @@ class Video_Dataset:
         
         # Process each video in the dictionary
         for model_name, video_path in videos_dict.items():
-            frames = self._extract_frames(video_path, extract_frames_persecond, resize_fx, resize_fy)
+            frames = self.extract_frames(video_path, extract_frames_persecond, resize_fx, resize_fy)
             base64Frames[model_name] = frames
 
         return base64Frames
