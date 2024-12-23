@@ -1,11 +1,5 @@
 # Video-Bench: Human Preference Aligned Video Generation Benchmark
 
-<<<<<<< HEAD
-<div align="center">
-    <img src="./asset/dimension.png" alt="HABench Overview" width="800"/>
-</div>
-
-HABench is a benchmark tool designed to systematically leverage MLLMs across all dimensions relevant to video generation assessment in generative models. By incorporating few-shot scoring and chain-of-query techniques, HA-Video-Bench provides a structured, scalable approach to generated video evaluation.
 =======
 *Video-Bench is a benchmark tool designed to systematically leverage MLLMs across all dimensions relevant to video generation assessment in generative models. By incorporating few-shot scoring and chain-of-query techniques, Video-Bench provides a structured, scalable approach to generated video evaluation.*
 >>>>>>> f5a97cb267f2dbec3cad56b786871ac4aec9866d
