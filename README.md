@@ -70,7 +70,7 @@ HABench is a benchmark tool designed to systematically leverage MLLMs across all
 | GRiT [54]   | VBench [19]    | -               | -                  | -                  | -              | -                    | -                     | -              | -               | -              |
 | Tag2Text [16]| VBench [19]   | -               | -                  | -                  | -              | 0.469                | 0.545                 | -              | -               | 0.422          |
 | ComBench [46]| ComBench [46] | -               | -                  | -                  | -              | 0.611                | 0.696                 | 0.633          | 0.633           | 0.631          |
-| **Ours**    | **Ours**       | **0.733**       | **0.702**          | **0.402**          | **0.514**      | **0.735**            | **0.750**             | **0.718**      | **0.733**       | **0.733**      |
+| **Video-Bench**    | **Video-Bench**       | **0.733**       | **0.702**          | **0.402**          | **0.514**      | **0.735**            | **0.750**             | **0.718**      | **0.733**       | **0.733**      |
 
 **Notes**:
 - Higher scores indicate better performance.
