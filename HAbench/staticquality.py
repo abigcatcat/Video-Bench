@@ -7,7 +7,7 @@ import logging
 from tenacity import retry, stop_after_attempt, wait_random_exponential
 
 
-def eval(config, prompt,dimension):
+def eval(config, prompt, dimension, cur_full_info_path):
     # 设置日志
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
@@ -22,10 +22,10 @@ def eval(config, prompt,dimension):
     )
 
     MODEL="gpt-4o-2024-08-06"
-    models = ['cogvideox5b','gen3','kling','videocrafter2','pika','show1','lavie']
-
-    dataset = Video_Dataset(data_dir=config['dataset_root_path'])
-    results = {}    # 存储最终评分结果
+    
+    # 使用新的 Video_Dataset
+    dataset = Video_Dataset(cur_full_info_path)
+    results = {}
     
     l1 = list(range(0, len(dataset)))
     for i in l1:
@@ -33,10 +33,13 @@ def eval(config, prompt,dimension):
         data = dataset[i]
         results[i] = {}
         
-        for model in models:
+        # 获取当前数据中的所有模型
+        available_models = list(data['frames'].keys())
+        
+        for modelname in available_models:
             try:
-                modelname = model
-                examplemodels = [x for x in models if x != modelname]
+                # 获取其他模型作为示例
+                examplemodels = [x for x in available_models if x != modelname]
                 frames = data['frames']
                 prompten = data['prompt']
 
@@ -64,7 +67,6 @@ def eval(config, prompt,dimension):
                     }
                 ]
 
-                # 调用API获取响应
                 response = client.chat.completions.create(
                     model=MODEL,
                     messages=messages,
@@ -72,16 +74,13 @@ def eval(config, prompt,dimension):
                 )
                 response_content = response.choices[0].message.content
                 
-                # 记录评估结果
-                results[i][modelname] = response_content      # 可以根据需要提取分数部分
-                
+                results[i][modelname] = response_content
                 logger.info(f'>>>>>>>Model {modelname} evaluation:\n{response_content}')
 
             except Exception as e:
                 logger.error(f'Error evaluating model {modelname}: {str(e)}')
                 results[i][modelname] = 'Error'
 
-    # 返回符合主类期望的结构
     return {
-        'score': results             # 评分结果
+        'score': results
     }

@@ -1,4 +1,6 @@
 import os
+import re
+from pathlib import Path    
 import json
 import cv2
 import time
@@ -7,73 +9,75 @@ import numpy as np
 from concurrent.futures import ThreadPoolExecutor
 
 class Video_Dataset:
-    def __init__(self, data_dir):
-        self.data_dir = data_dir
-        self.json_path = os.path.join(data_dir, 'human_anno/color.json')
+    def __init__(self, cur_full_info_path):
+        self.json_path = cur_full_info_path
         self.annotations = self.load_annotations()
 
     def load_annotations(self):
         with open(self.json_path, 'r') as f:
             return json.load(f)
 
-    def process_video(self, datadir, videos_path, extract_frames_persecond=2, resize_fx=1, resize_fy=1):
-        base64Frames = {
-            "cogvideox5b": [],
-            "kling": [],
-            "gen3": [],
-            "lavie": [],
-            "pika": [],
-            "show1": [],
-            "videocrafter2": []
-        }
+    def _extract_frames(self, video_path, extract_frames_persecond, resize_fx, resize_fy):
+        """Extract frames from a video file"""
+        frames = []
+        video = cv2.VideoCapture(video_path)
         
-        for key in base64Frames.keys():
-            video = cv2.VideoCapture(os.path.join(datadir, videos_path[key]))
+        if not video.isOpened():
+            print(f"Error: Cannot open video file {video_path}")
+            return frames
 
-            if not video.isOpened():
-                print(f"Error: Cannot open video file {datadir + videos_path[key]}")
-                continue
+        total_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+        fps = video.get(cv2.CAP_PROP_FPS)
+        frames_to_skip = int(fps / extract_frames_persecond)
 
-            total_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
-            fps = video.get(cv2.CAP_PROP_FPS)
-            frames_to_skip = int(fps / extract_frames_persecond)
-
-            curr_frame = 1
-            end_frame = total_frames - 1
-            
-            # Loop through the video and extract frames at specified sampling rate
-            while curr_frame < total_frames - 1:
-                video.set(cv2.CAP_PROP_POS_FRAMES, curr_frame)
-                success, frame = video.read()
-                if not success:
-                    break
-
-                frame = cv2.resize(frame, None, fx=resize_fx, fy=resize_fx)
-                _, buffer = cv2.imencode(".jpg", frame)
-                base64Frames[key].append(base64.b64encode(buffer).decode("utf-8"))
-                curr_frame += frames_to_skip
-
-            # Get the last frame
-            video.set(cv2.CAP_PROP_POS_FRAMES, end_frame)
+        curr_frame = 1
+        end_frame = total_frames - 1
+        
+        while curr_frame < total_frames - 1:
+            video.set(cv2.CAP_PROP_POS_FRAMES, curr_frame)
             success, frame = video.read()
-            if success:
-                frame = cv2.resize(frame, None, fx=resize_fx, fy=resize_fx)
-                _, buffer = cv2.imencode(".jpg", frame)
-                base64Frames[key].append(base64.b64encode(buffer).decode("utf-8"))
+            if not success:
+                break
 
-            video.release()
+            frame = cv2.resize(frame, None, fx=resize_fx, fy=resize_fx)
+            _, buffer = cv2.imencode(".jpg", frame)
+            frames.append(base64.b64encode(buffer).decode("utf-8"))
+            curr_frame += frames_to_skip
+
+        # Get the last frame
+        video.set(cv2.CAP_PROP_POS_FRAMES, end_frame)
+        success, frame = video.read()
+        if success:
+            frame = cv2.resize(frame, None, fx=resize_fx, fy=resize_fx)
+            _, buffer = cv2.imencode(".jpg", frame)
+            frames.append(base64.b64encode(buffer).decode("utf-8"))
+
+        video.release()
+        return frames
+
+    def process_video(self, videos_dict, extract_frames_persecond=2, resize_fx=1, resize_fy=1):
+        """Process videos from a dictionary of model:path pairs"""
+        # 只为videos_dict中存在的模型创建条目
+        base64Frames = {model: [] for model in videos_dict.keys()}
+        
+        # Process each video in the dictionary
+        for model_name, video_path in videos_dict.items():
+            frames = self._extract_frames(video_path, extract_frames_persecond, resize_fx, resize_fy)
+            base64Frames[model_name] = frames
 
         return base64Frames
-    
-    def process_video2gridview(self,datadir, videos_path, extract_frames_persecond=8):
-        base64Frames = {"cogvideox5b": [], "kling": [], "gen3": [], "lavie": [], "pika": [], "show1": [], "videocrafter2": []}
 
-        def process_video(key):
+    def process_video2gridview(self, videos_dict, extract_frames_persecond=8):
+        """Process videos for grid view"""
+        # 只为videos_dict中存在的模型创建条目
+        base64Frames = {model: [] for model in videos_dict.keys()}
+
+        def process_video(model_name, video_path):
             frames = []
-            video = cv2.VideoCapture(os.path.join(datadir, videos_path[key]))
+            video = cv2.VideoCapture(video_path)
 
             if not video.isOpened():
-                print(f"Error: Cannot open video file {datadir+videos_path[key]}")
+                print(f"Error: Cannot open video file {video_path}")
                 return
 
             total_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -96,30 +100,54 @@ class Video_Dataset:
                         grid_image[0:height, j * width:(j + 1) * width] = frames[j]
 
                     _, buffer = cv2.imencode(".jpg", grid_image)
-                    base64Frames[key].append(base64.b64encode(buffer).decode("utf-8"))
+                    base64Frames[model_name].append(base64.b64encode(buffer).decode("utf-8"))
                     frames = []
 
             video.release()
 
         with ThreadPoolExecutor() as executor:
-            executor.map(process_video, base64Frames.keys())
+            futures = []
+            for model_name, video_path in videos_dict.items():
+                futures.append(
+                    executor.submit(process_video, model_name, video_path)
+                )
+            
+            for future in futures:
+                future.result()
 
         return base64Frames
-
 
     def __len__(self):
         return len(self.annotations)
 
     def __getitem__(self, idx):
+        """Get item from dataset
+        
+        Returns:
+            dict: Contains frames, grid_frames and prompt for the video
+        """
         annotation = self.annotations[idx]
-        frames = self.process_video(self.data_dir, annotation['videos'], 2)
-        grid_frames = self.process_video2gridview(self.data_dir, annotation['videos'], 8)
+        
+        # Process videos using the videos dictionary
+        frames = self.process_video(annotation['videos'], 2)
+        grid_frames = self.process_video2gridview(annotation['videos'], 8)
         
         return {
             'frames': frames,
             'grid_frames': grid_frames,
             'prompt': annotation['prompt_en']
         }
+
+def get_prompt_from_filename(path: str):
+    """
+    1. prompt-0.suffix -> prompt
+    2. prompt.suffix -> prompt
+    """
+    prompt = Path(path).stem
+    number_ending = r'-\d+$' # checks ending with -<number>
+    if re.search(number_ending, prompt):
+        return re.sub(number_ending, '', prompt)
+    return prompt
 
 def save_json(data, path, indent=4):
     with open(path, 'w', encoding='utf-8') as f:

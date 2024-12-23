@@ -288,7 +288,17 @@ def extract_content_from_result(final_result):
 
     return content_des, content_score
 
-def eval(config, prompt,dimension):
+def eval(config, prompt, dimension, cur_full_info_path):
+    """
+    Evaluate video-text consistency
+    
+    Args:
+        config: Configuration dictionary
+        prompt: Evaluation prompt
+        dimension: Evaluation dimension
+        cur_full_info_path: Path to JSON file containing video paths and prompts
+                          (Videos will be loaded and processed by Video_Dataset class)
+    """
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
     file_handler = logging.FileHandler(config[f'log_path_{dimension}'])
@@ -297,8 +307,8 @@ def eval(config, prompt,dimension):
     logger.addHandler(file_handler)
 
     # load data
-    dataset = Video_Dataset(data_dir=config['dataset_root_path'])
-    #
+    dataset = Video_Dataset(cur_full_info_path)
+    
     index = 0
     score = {}
     up_des = {}
@@ -306,26 +316,23 @@ def eval(config, prompt,dimension):
 
     l1 = list(range(0, len(dataset)))
     for i in l1:
-        data=dataset[i]
-
+        data = dataset[i]
+        
         score[i] = {}
         up_des[i] = {}
         history[i] = {}
 
-        model2message = {
-             'lavie': "5 frames from lavie.",
-             'pika': "7 frames from pika.",
-             'show1': "8 frames from show1.",
-             'videocrafter2': "4 frames from videocrafter2.",
-              'cogvideox5b': "12 frames from cogvideox5b. ",
-             'kling': "10 frames from kling." ,
-             'gen3': "20 frames from gen3.",
-        }
-        for key, value in model2message.items():
-            modelname = key
-            modelmessage = value
-            agents = [Agent('Assistant-one', logger, prompt, config), Agent('Assistant-two', logger, prompt, config)]
+        # 动态获取模型列表
+        available_models = list(data['frames'].keys())
+        
+        for modelname in available_models:
+            # 为自定义模型创建消息
+            modelmessage = f"{len(data['frames'][modelname])} frames from {modelname}."
+            
+            agents = [Agent('Assistant-one', logger, prompt, config), 
+                     Agent('Assistant-two', logger, prompt, config)]
             host = Host('Host', logger, prompt, config, modelname, modelmessage, agents)
+            
             for agent in agents:
                 agent.video_prompt = data['prompt']
             host.video_prompt = data['prompt']
@@ -333,8 +340,6 @@ def eval(config, prompt,dimension):
 
             logger.info(f'>>>>>>>>This is the {i}_{modelname} round>>>>>>>')
             try:
-
-                
                 # 收集初始描述
                 init_response = host.initial_result()
                 logger.info(f'>>>>>>>>>>initial response:\n{init_response}')
