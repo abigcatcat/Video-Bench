@@ -36,10 +36,6 @@ HABench is a benchmark tool designed to systematically leverage MLLMs across all
 
 # Literature
 
-## Video Generation Models
-
-(A Table to be filled, providing name, year, paper link, github link, accepted conference)
-
 ## Video Generation Evaluation Methods
 
 (A Table to be filled, providing name, year, paper link, github link, accepted conference)
