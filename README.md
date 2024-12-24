@@ -180,34 +180,17 @@ Video-Bench provides comprehensive evaluation across multiple dimensions of vide
 
 ## Evaluation Dimensions
 
-### Static Quality
 | Dimension | Description | Scale | Module |
 |-----------|-------------|--------|---------|
 | Image Quality | Evaluates technical aspects of frame quality including clarity, sharpness, and artifacts | 1-5 | `staticquality.py` |
 | Aesthetic Quality | Assesses visual appeal, composition, and artistic elements | 1-5 | `staticquality.py` |
-
-### Dynamic Aspects
-| Dimension | Description | Scale | Module |
-|-----------|-------------|--------|---------|
 | Temporal Consistency | Measures frame-to-frame coherence and smoothness | 1-5 | `dynamicquality.py` |
 | Motion Effects | Evaluates quality and naturalness of movement and dynamics | 1-5 | `dynamicquality.py` |
-
-### Video-Text Alignment
-| Dimension | Description | Scale | Module |
-|-----------|-------------|--------|---------|
-| Video-Text Consistency | Overall alignment between video content and text prompt | 1-3 | `VideoTextConsistency.py` |
+| Video-Text Consistency | Overall alignment between video content and text prompt | 1-5 | `VideoTextConsistency.py` |
 | Object-Class Consistency | Accuracy of object representation compared to prompt | 1-3 | `VideoTextConsistency.py` |
 | Color Consistency | Matching of colors between video and text description | 1-3 | `VideoTextConsistency.py` |
 | Action Consistency | Accuracy of depicted actions relative to prompt | 1-3 | `VideoTextConsistency.py` |
 | Scene Consistency | Correctness of scene setting and environment | 1-3 | `VideoTextConsistency.py` |
-
-### Scoring Criteria
-- **5-point scale (1-5)**:
-  - 1: Poor quality with significant issues
-  - 2: Fair quality with noticeable problems
-  - 3: Good quality with minor flaws
-  - 4: Very good quality with minimal issues
-  - 5: Excellent quality with no apparent problems
 
 
 # Usage
