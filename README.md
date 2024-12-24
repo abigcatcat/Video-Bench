@@ -231,7 +231,7 @@ HAbench evaluate.py \
 ## Custom Input Mode
 This mode allows users to evaluate videos generated from prompts that are not included in the Video-Bench prompt suite.
 
-### For [Video-Text Alignment](#video-text-alignment) Dimensions:
+### For [Video-Text Alignment](#video-text-alignment) or [Dynamic Quality](#dynamic-quality) Dimensions:
 ```bash
 python evaluate.py \
  --dimension $DIMENSION \
@@ -248,7 +248,7 @@ HAbench evaluate.py \
  --config_path ./config.json
 ```
 
-### For [Static Quality](#static-quality) or [Dynamic Quality](#dynamic-quality) Dimensions:
+### For [Static Quality](#static-quality) Dimensions:
 ```bash
 python evaluate.py \
  --dimension $DIMENSION \
