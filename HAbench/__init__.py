@@ -58,23 +58,40 @@ class HABench(object):
             # 获取实际的数据目录
             actual_dimensions = set(dimension_mapping[dim] for dim in dimension_list)
             
-            # if os.path.isfile(videos_path):
-            if os.path.isdir(videos_path) and len([f for f in os.listdir(videos_path) if os.path.isdir(os.path.join(videos_path, f))]) == 1:
-                # Single video file
-                model_name = os.path.basename(os.path.dirname(videos_path))
-                full_name = f"{model_name}/{os.path.basename(videos_path)}"
-                prompt = get_prompt_from_filename(full_name) if not prompt_list else prompt_list.get(full_name, get_prompt_from_filename(full_name))
-                videos_dict = {model_name: os.path.abspath(videos_path)}
-                cur_full_info_list = [{
-                    "prompt_en": prompt,
-                    "dimension": dimension_list,
-                    "videos": videos_dict
-                }]
-            else:
-                # Directory containing videos
+            # ���查videos_path下的模型目录
+            model_dirs = [d for d in os.listdir(videos_path) if os.path.isdir(os.path.join(videos_path, d))]
+            
+            # 如果只有一个模型目录，检查每个维度下是否只有一个视频
+            if len(model_dirs) == 1:
+                model_name = model_dirs[0]
+                single_video = True
+                
+                # 检查每个维度目录
+                for actual_dim in actual_dimensions:
+                    model_path = os.path.join(videos_path, actual_dim)
+                    video_files = [f for f in os.listdir(model_path) if Path(f).suffix.lower() in ['.mp4', '.gif', '.jpg', '.png']]
+                    
+                    # 如果任何维度下有多个视频，使用标准处理
+                    if len(video_files) != 1:
+                        single_video = False
+                        break
+                        
+                    # 处理单个视频
+                    if single_video:
+                        video_name = video_files[0]
+                        video_path = os.path.join(model_path, video_name)
+                        extracted_prompt = get_prompt_from_filename(video_name)
+                                                                          # 创建info entry
+                        videos_dict = {model_name: os.path.abspath(video_path).replace("\\", "/")}
+                        cur_full_info_list.append({
+                            "prompt_en": prompt,
+                            "dimension": dimension_list,
+                            "videos": videos_dict
+                        })
+            
+            # 如果有多个模型目录或多个视频，使用标准处理
+            if not cur_full_info_list:
                 videos_by_prompt = {}
-
-                # 遍历每个实际维度目录
                 for actual_dim in actual_dimensions:
                     dimension_path = os.path.join(videos_path, actual_dim)
                     if os.path.exists(dimension_path):
@@ -86,7 +103,7 @@ class HABench(object):
                                         video_path = os.path.join(dimension_path, model_name, video_name)
                                         extracted_prompt = get_prompt_from_filename(video_name)
                                         
-                                        # 在prompt_list中查找匹配的prompt
+                                        # 匹配prompt
                                         matched_prompt = None
                                         if prompt_list:
                                             for prompt_key, prompt_value in prompt_list.items():
@@ -99,7 +116,8 @@ class HABench(object):
                                         if prompt not in videos_by_prompt:
                                             videos_by_prompt[prompt] = {}
                                         videos_by_prompt[prompt][model_name] = video_path.replace("\\", "/")
-                # Create info list entries
+                
+                # 创建info entries
                 for prompt, videos in videos_by_prompt.items():
                     cur_full_info_list.append({
                         "prompt_en": prompt,
@@ -142,7 +160,7 @@ class HABench(object):
                                             if verbose:
                                                 print(f'Successfully found video: {video_path}')
                                         elif verbose:
-                                            print(f'WARNING!!! Required video not found: {video_path}')
+                                            print(f'Error!!! Required video not found: {video_path}')
                     
                     if videos_dict:  # 只有当找到视频时才添加到列表中
                         cur_full_info_list.append({
@@ -175,18 +193,25 @@ class HABench(object):
             static_dimensions = ['aesthetic_quality', 'imaging_quality']
             dynamic_dimensions = ['temporal_consistency', 'motion_effects']
 
+            from .prompt_dict import prompt
+
             if dimension in VideoTextConsistency_dimensions:
-                from .VideoTextConsistency import eval
-                from .prompt_dict import prompt
+                from .VideoTextAlignment import eval
                 results = eval(self.config, prompt[dimension], dimension, cur_full_info_path)
+            
             elif dimension in static_dimensions:
                 from .staticquality import eval
-                from .prompt_dict import prompt
                 results = eval(self.config, prompt[dimension], dimension, cur_full_info_path)
+            
             elif dimension in dynamic_dimensions:
-                from .dynamicquality import eval
-                from .prompt_dict import prompt
+                if mode == 'custom_input_consistency':
+                    # 自定义模式使用 gridview 的评估函数
+                    from .dynamicquality_gridview_customized import eval
+                else:
+                    # 标准模式使用原来的评估函数
+                    from .dynamicquality import eval
                 results = eval(self.config, prompt[dimension], dimension, cur_full_info_path)
+            
             else:
                 raise ValueError(f"Unknown dimension: {dimension}")
             
