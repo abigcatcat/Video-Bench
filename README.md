@@ -176,18 +176,39 @@ Please organize your data according to the following structure:
 
 # Instructions
 
-**Video-Bench enables video generation assessment from multiple dimensions. Different dimensions apply different scoring scales to enable accurate evaluation.**
-| Dimension  | Description | scoring scale |  Code Path |
-|------------|-------------|---------------|------------|
-| Image Quality  |This metric focuses on the technical quality of individual frames.|Five-point scale|  `Video-Bench/staticquality.py` |
-| Aesthetic Quality  | the aesthetic quality of generated frames is evaluated to determine if they meet aesthetic standards and align with human perceptual expectations.|Five-point scale| `Video-Bench/staticquality.py`  |
-| Temporal Consistency |Temporal consistency is a crucial aspect of video quality that directly impacts the smoothness and naturalness of the video.|Five-point scale| `Video-Bench/dynamicquality.py`  |
-| Motion Effects |Motion quality is fundamental in distinguishing video from static images and plays a vital role in evaluating the dynamics of generated content| Five-point scale|`Video-Bench/dynamicquality.py` |
-| Object-Class Consistency | This metric evaluates whether the objects presented in the video match those described in the text prompt. |Three-point scale|`Video-Bench/VideoTextConsistency.py` |
-| Video-Text Consistency | This metric assesses the overall consistency between the video and the text prompt.|Three-point scale|`Video-Bench/VideoTextConsistency.py` |
-| Color Consistency | This metric measures whether the colors of objects in the video match those described in the text prompt.|Three-point scale|`Video-Bench/VideoTextConsistency.py` |
-| Action Consistency | This metric assesses whether the objects and actions in the video accurately reflect the descriptions in the text prompt.|Three-point scale|`Video-Bench/VideoTextConsistency.py` |
-| Scene Consistency |This metric evaluates the alignment of the generated scene with the textual prompt.|Three-point scale|`Video-Bench/VideoTextConsistency.py` |
+Video-Bench provides comprehensive evaluation across multiple dimensions of video generation quality. Each dimension is assessed using a specific scoring scale to ensure accurate and meaningful evaluation.
+
+## Evaluation Dimensions
+
+### Static Quality
+| Dimension | Description | Scale | Module |
+|-----------|-------------|--------|---------|
+| Image Quality | Evaluates technical aspects of frame quality including clarity, sharpness, and artifacts | 1-5 | `staticquality.py` |
+| Aesthetic Quality | Assesses visual appeal, composition, and artistic elements | 1-5 | `staticquality.py` |
+
+### Dynamic Aspects
+| Dimension | Description | Scale | Module |
+|-----------|-------------|--------|---------|
+| Temporal Consistency | Measures frame-to-frame coherence and smoothness | 1-5 | `dynamicquality.py` |
+| Motion Effects | Evaluates quality and naturalness of movement and dynamics | 1-5 | `dynamicquality.py` |
+
+### Video-Text Alignment
+| Dimension | Description | Scale | Module |
+|-----------|-------------|--------|---------|
+| Video-Text Consistency | Overall alignment between video content and text prompt | 1-3 | `VideoTextConsistency.py` |
+| Object-Class Consistency | Accuracy of object representation compared to prompt | 1-3 | `VideoTextConsistency.py` |
+| Color Consistency | Matching of colors between video and text description | 1-3 | `VideoTextConsistency.py` |
+| Action Consistency | Accuracy of depicted actions relative to prompt | 1-3 | `VideoTextConsistency.py` |
+| Scene Consistency | Correctness of scene setting and environment | 1-3 | `VideoTextConsistency.py` |
+
+### Scoring Criteria
+- **5-point scale (1-5)**:
+  - 1: Poor quality with significant issues
+  - 2: Fair quality with noticeable problems
+  - 3: Good quality with minor flaws
+  - 4: Very good quality with minimal issues
+  - 5: Excellent quality with no apparent problems
+
 
 # Usage
 Run the following command to evaluate the dimension you want to evaluate:
