@@ -36,6 +36,8 @@ HABench is a benchmark tool designed to systematically leverage MLLMs across all
 
 # Literature
 
+## Video Generation Evaluation Methods
+
 <table>
   <thead>
     <tr>
@@ -88,11 +90,130 @@ HABench is a benchmark tool designed to systematically leverage MLLMs across all
       <td>2024</td>
       <td>This work introduces a benchmark for Spatially Aligned Audio-Video Generation (SAVG), focusing on spatial alignment between audio and visuals. Key innovations include a new dataset, a baseline diffusion model for stereo audio-visual learning, and a spatial alignment metric, revealing significant gaps in quality and alignment between the model and ground truth.</td>
     </tr>
+ <tr>
+      <td>VBench++</td>
+      <td><a href="https://arxiv.org/abs/2411.13503">Link</a></td>
+      <td><a href="https://github.com/Vchitect/VBench">GitHub</a></td>
+      <td>Arxiv</td>
+      <td>2024</td>
+      <td>VBench++ is a comprehensive benchmark for video generation, featuring 16 evaluation dimensions, human alignment validation, and support for both text-to-video and image-to-video models, assessing both technical quality and model trustworthiness.</td>
+    </tr>
+    <tr>
+      <td>T2V-CompBench</td>
+      <td><a href="https://arxiv.org/abs/2407.14505">Link</a></td>
+      <td><a href="https://github.com/KaiyueSun98/T2V-CompBench">GitHub</a></td>
+      <td>Arxiv</td>
+      <td>2024</td>
+      <td>T2V-CompBench evaluates diverse aspects such as attribute binding, spatial relationships, motion, and object interactions. It introduces tailored evaluation metrics based on MLLM, detection, and tracking, validated by human evaluation.</td>
+    </tr>
+    <tr>
+      <td>VideoScore</td>
+      <td><a href="https://aclanthology.org/2024.emnlp-main.127/">Link</a></td>
+      <td><a href="https://tiger-ai-lab.github.io/VideoScore/">Website</a></td>
+      <td>EMNLP</td>
+      <td>2024</td>
+      <td>It introduces a dataset with human-provided multi-aspect scores for 37.6K videos from 11 generative models. VideoScore is trained on this to provide automatic video quality assessment, achieving a 77.1 Spearman correlation with human ratings.</td>
+    </tr>
+    <tr>
+      <td>ChronoMagic-Bench</td>
+      <td><a href="https://arxiv.org/abs/2406.18522">Link</a></td>
+      <td><a href="https://pku-yuangroup.github.io/ChronoMagic-Bench/">Website</a></td>
+      <td>NeurIPS</td>
+      <td>2024</td>
+      <td>ChronoMagic-Bench evaluates T2V models on their ability to generate time-lapse videos with significant metamorphic amplitude and temporal coherence, using 1,649 prompts across four categories. Its advantages include the introduction of new metrics (MTScore and CHScore) and a large-scale dataset (ChronoMagic-Pro) for comprehensive, high-quality evaluation.</td>
+    </tr>
+    <tr>
+      <td>T2VSafetyBench</td>
+      <td><a href="https://arxiv.org/abs/2407.05965">Link</a></td>
+      <td><a href="https://github.com/yibo-miao/T2VSafetyBench">GitHub</a></td>
+      <td>NeurIPS</td>
+      <td>2024</td>
+      <td>T2VSafetyBench introduces a benchmark for assessing the safety of text-to-video models, focusing on 12 critical aspects of video generation safety, including temporal risks. It addresses the unique safety concerns of video generation, providing a malicious prompt dataset, and offering valuable insights into the trade-off between usability and safety.</td>
+    </tr>
+    <tr>
+      <td>T2VBench</td>
+      <td><a href="https://openaccess.thecvf.com/content/CVPR2024W/EvGenFM/html/Ji_T2VBench_Benchmarking_Temporal_Dynamics_for_Text-to-Video_Generation_CVPRW_2024_paper.html">Link</a></td>
+      <td><a href="https://ji-pengliang.github.io/T2VBench/">Website</a></td>
+      <td>CVPR</td>
+      <td>2024</td>
+      <td>T2VBench focuses on 16 critical temporal dimensions such as camera transitions and event sequences for evaluating text-to-video models, consisting of a hierarchical framework with over 1,600 prompts and 5,000 videos.</td>
+    </tr>
+    <tr>
+      <td>EvalCrafter</td>
+      <td><a href="https://openaccess.thecvf.com/content/CVPR2024/html/Liu_EvalCrafter_Benchmarking_and_Evaluating_Large_Video_Generation_Models_CVPR_2024_paper.html">Link</a></td>
+      <td><a href="http://evalcrafter.github.io/">Website</a></td>
+      <td>CVPR</td>
+      <td>2024</td>
+      <td>EvalCrafter provides a systematic framework for benchmarking and evaluating large-scale video generation models, ensuring high-quality assessments across various video generation attributes.</td>
+    </tr>
+<tr>
+      <td>VQAScore</td>
+      <td><a href="https://link.springer.com/chapter/10.1007/978-3-031-72673-6_20">Link</a></td>
+      <td><a href="https://github.com/linzhiqiu/t2v_metrics">GitHub</a></td>
+      <td>ECCV</td>
+      <td>2024</td>
+      <td>This work introduces VQAScore, a novel alignment metric that uses a visual-question-answering model to assess image-text coherence, addressing the limitations of CLIPScore with complex prompts. It also presents GenAI-Bench, a challenging benchmark of 1,600 compositional prompts and 15,000 human ratings, enabling more accurate evaluation of generative models like Stable Diffusion and DALL-E 3.</td>
+    </tr>
+    <tr>
+      <td>VBench</td>
+      <td><a href="https://openaccess.thecvf.com/content/CVPR2024/html/Huang_VBench_Comprehensive_Benchmark_Suite_for_Video_Generative_Models_CVPR_2024_paper.html">Link</a></td>
+      <td><a href="https://github.com/Vchitect/VBench">GitHub</a></td>
+      <td>CVPR</td>
+      <td>2024</td>
+      <td>VBench introduces a comprehensive evaluation benchmark for video generation, addressing the misalignment between current metrics and human perception. Its key innovations include 16 detailed evaluation dimensions, human preference alignment for validation, and the ability to assess various content types and model gaps.</td>
+    </tr>
+    <tr>
+      <td>DEVIL</td>
+      <td><a href="https://arxiv.org/abs/2407.01094">Link</a></td>
+      <td><a href="https://github.com/MingXiangL/DEVIL">GitHub</a></td>
+      <td>NeurIPS</td>
+      <td>2024</td>
+      <td>DEVIL introduces a new benchmark with dynamic scores at different temporal granularities, achieving over 90% Pearson correlation with human ratings for comprehensive model assessment.</td>
+    </tr>
+    <tr>
+      <td>AIGCBench</td>
+      <td><a href="https://arxiv.org/abs/2401.01651">Link</a></td>
+      <td><a href="https://www.benchcouncil.org/AIGCBench">Website</a></td>
+      <td>Arxiv</td>
+      <td>2024</td>
+      <td>AIGCBench is a benchmark for evaluating image-to-video (I2V) generation. It incorporates an open-domain image-text dataset and introduces 11 metrics across four dimensions—alignment, motion effects, temporal consistency, and video quality.</td>
+    </tr>
+    <tr>
+      <td>MiraData</td>
+      <td><a href="https://arxiv.org/abs/2407.06358">Link</a></td>
+      <td><a href="https://github.com/mira-space/MiraData">GitHub</a></td>
+      <td>NeurIPS</td>
+      <td>2024</td>
+      <td>MiraData offers longer videos, stronger motion intensity, and more detailed captions. Paired with MiraBench to enhance evaluation with metrics like 3D consistency and motion strength.</td>
+    </tr>
+    <tr>
+      <td>PhyGenEval</td>
+      <td><a href="https://arxiv.org/abs/2410.05363">Link</a></td>
+      <td><a href="https://phygenbench123.github.io/">Website</a></td>
+      <td>Arxiv</td>
+      <td>2024</td>
+      <td>PhyGenBench is designed to evaluate the understanding of physical commonsense in text-to-video (T2V) generation, consisting of 160 prompts covering 27 physical laws across four domains, paired with the PhyGenEval evaluation framework that enables assessments of models' adherence to physical commonsense.</td>
+    </tr>
+    <tr>
+      <td>VideoPhy</td>
+      <td><a href="https://arxiv.org/abs/2406.03520">Link</a></td>
+      <td><a href="https://github.com/Hritikbansal/videophy">GitHub</a></td>
+      <td>Arxiv</td>
+      <td>2024</td>
+      <td>VideoPhy is a benchmark designed to assess the physical commonsense accuracy of generated videos, particularly for T2V models, by evaluating their adherence to real-world physical laws and behaviors.</td>
+    </tr>
+    <tr>
+      <td>T2VHE</td>
+      <td><a href="https://arxiv.org/abs/2406.08845">Link</a></td>
+      <td><a href="https://github.com/ztlmememe/T2VHE">GitHub</a></td>
+      <td>Arxiv</td>
+      <td>2024</td>
+      <td>The T2VHE protocol is an approach for evaluating text-to-video (T2V) models, addressing challenges in reproducibility, reliability, and practicality of manual evaluations. It includes defined metrics, annotator training, and a dynamic evaluation module.</td>
+    </tr>
   </tbody>
 </table>
 
-## Video Generation Evaluation Methods
-
+<!--
 | Model             | Paper                                                                                                      | Resource                                                                                     | Conference/Journal/Preprint | Year | Features |
 |-------------------|------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|-----------------------------|------|----------|
 | Video-Bench              | [Link](xxx) | [GitHub](https://github.com/Video-Bench/Video-Bench/)                                                      | Arxiv                     | 2024 |      Video-Bench leverages Multimodal Large Language Models (MLLMs) to provide highly accurate evaluations that closely align with human preferences across multiple dimensions of video quality. It incorporates few-shot scoring and chain-of-query techniques, allowing for scalable and structured assessments. Video-Bench supports cross-modal consistency and offers more objective insights when diverging from human judgments, making it a more reliable and comprehensive tool for video generation evaluation. It also demonstrates unique strength compared to human ratings in terms of accuracy. |
@@ -115,7 +236,7 @@ HABench is a benchmark tool designed to systematically leverage MLLMs across all
 | PhyGenEval   | [Link](https://arxiv.org/abs/2410.05363)                                                                   | [Website](https://phygenbench123.github.io/)                                                       | Arxiv                       | 2024 |     PhyGenBench is designed to evaluate the understanding of physical commonsense in text-to-video (T2V) generation, consisting of 160 prompts covering 27 physical laws across four domains, paired with the PhyGenEval evaluation framework that enables assessments of models' adherence to physical commonsense.     |
 | VideoPhy     | [Link](https://arxiv.org/abs/2406.03520)                                                                   | [GitHub](https://github.com/Hritikbansal/videophy)                                                 | Arxiv                       | 2024 |     VideoPhy is a benchmark designed to assess the physical commonsense accuracy of text-to-video generative models by evaluating how well generated videos follow real-world physical interactions across various material types, highlighting significant gaps of current models in simulating the physical world.     |
 | T2VHE        | [Link](https://arxiv.org/abs/2406.08845)                                                                   | [GitHub](https://github.com/ztlmememe/T2VHE)                                                      | Arxiv                       | 2024 |     The T2VHE protocol is a approach for evaluating text-to-video (T2V) models, addressing challenges in reproducibility, reliability, and practicality of manual evaluations. It includes defined metrics, annotator training, and a dynamic evaluation module.     |
-
+-->
 
 # Leaderboard
 
