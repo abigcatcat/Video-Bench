@@ -367,7 +367,7 @@ def eval(config, prompt, dimension, cur_full_info_path):
                 logger.info('>>>>>>>>>>>Error occurred during conversation...')
                 logger.info('Errormessage: ' + str(e))
                 print(f"An error occurred: {e}")
-                score[i][modelname] = 'Error'
+                score[i] = 'Error'
 
             for agent in agents:
                 agent.reset()
