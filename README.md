@@ -36,6 +36,61 @@ HABench is a benchmark tool designed to systematically leverage MLLMs across all
 
 # Literature
 
+<table>
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Paper</th>
+      <th>Resource</th>
+      <th>Conference/Journal/Preprint</th>
+      <th>Year</th>
+      <th style="width: 300px;">Features</th> <!-- 增加列宽 -->
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Video-Bench</td>
+      <td><a href="xxx">Link</a></td>
+      <td><a href="https://github.com/Video-Bench/Video-Bench/">GitHub</a></td>
+      <td>Arxiv</td>
+      <td>2024</td>
+      <td>Video-Bench leverages Multimodal Large Language Models (MLLMs) to provide highly accurate evaluations that closely align with human preferences across multiple dimensions of video quality. It incorporates few-shot scoring and chain-of-query techniques, allowing for scalable and structured assessments. Video-Bench supports cross-modal consistency and offers more objective insights when diverging from human judgments, making it a more reliable and comprehensive tool for video generation evaluation. It also demonstrates unique strength compared to human ratings in terms of accuracy.</td>
+    </tr>
+    <tr>
+      <td>FETV</td>
+      <td><a href="https://proceedings.neurips.cc/paper_files/paper/2023/hash/c481049f7410f38e788f67c171c64ad5-Abstract-Datasets_and_Benchmarks.html">Link</a></td>
+      <td><a href="https://github.com/llyx97/FETV">GitHub</a></td>
+      <td>NeurIPS</td>
+      <td>2023</td>
+      <td>FETV is multi-aspect, categorizing the prompts based on three orthogonal aspects: the major content, the attributes to control and the prompt complexity.</td>
+    </tr>
+    <tr>
+      <td>FVD</td>
+      <td><a href="https://openreview.net/pdf?id=rylgEULtdN">Link</a></td>
+      <td><a href="https://github.com/google-research/google-research/tree/master/frechet_video_distance">GitHub</a></td>
+      <td>ICLR Workshop</td>
+      <td>2023</td>
+      <td>A novel metric for generative video models that extends the Fréchet Inception Distance (FID) to account for not only visual quality but also temporal coherence and diversity, addressing the lack of qualitative metrics in current video generation evaluation.</td>
+    </tr>
+    <tr>
+      <td>GAIA</td>
+      <td><a href="https://arxiv.org/abs/2406.06087">Link</a></td>
+      <td><a href="https://github.com/zijianchen98/GAIA">GitHub</a></td>
+      <td>Arxiv</td>
+      <td>2024</td>
+      <td>By adopting a causal reasoning perspective, it evaluates popular text-to-video (T2V) models on their ability to generate visually rational actions and benchmarks existing automatic evaluation methods, revealing a significant gap between current models and human perception patterns.</td>
+    </tr>
+    <tr>
+      <td>SAVGBench</td>
+      <td><a href="https://arxiv.org/abs/2412.13462">Link</a></td>
+      <td><a href="https://drive.google.com/file/d/14Fy6C_N6BXymYKhXMxVbt7tHnZmVRMEd/view, https://www.aicrowd.com/challenges/sounding-video-generation-svg-challenge-2024/problems/spatial-alignment-track">Links</a></td>
+      <td>Arxiv</td>
+      <td>2024</td>
+      <td>This work introduces a benchmark for Spatially Aligned Audio-Video Generation (SAVG), focusing on spatial alignment between audio and visuals. Key innovations include a new dataset, a baseline diffusion model for stereo audio-visual learning, and a spatial alignment metric, revealing significant gaps in quality and alignment between the model and ground truth.</td>
+    </tr>
+  </tbody>
+</table>
+
 ## Video Generation Evaluation Methods
 
 | Model             | Paper                                                                                                      | Resource                                                                                     | Conference/Journal/Preprint | Year | Features |
