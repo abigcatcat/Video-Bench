@@ -58,19 +58,19 @@ HABench is a benchmark tool designed to systematically leverage MLLMs across all
 
 # HumanAlignment
 
-| Metrics     | Benchmark      | Imaging Quality | Aesthetic Quality | Temporal Consist. | Motion Effects | Video-text Consist. | Object-class Consist. | Color Consist. | Action Consist. | Scene Consist. |
+| Metrics     | Benchmark      | Imaging Quality | Aesthetic Quality | Temporal Consist. | Motion Effects | Video-text Consist. |  Action Consist. |Object-class Consist. | Color Consist. | Scene Consist. |
 |-------------|----------------|------------------|--------------------|--------------------|----------------|----------------------|-----------------------|----------------|-----------------|----------------|
 | MUSIQ [21]  | VBench [19]    | 0.363           | -                  | -                  | -              | -                    | -                     | -              | -               | -              |
 | LAION       | VBench [19]    | -               | 0.446              | -                  | -              | -                    | -                     | -              | -               | -              |
 | CLIP [40]   | VBench [19]    | -               | -                  | 0.260              | -              | -                    | -                     | -              | -               | -              |
 | RAFT [48]   | VBench [19]    | -               | -                  | -                  | 0.329          | -                    | -                     | -              | -               | -              |
 | Amt [28]    | VBench [19]    | -               | -                  | -                  | 0.329          | -                    | -                     | -              | -               | -              |
-| ViCLIP [53] | VBench [19]    | -               | -                  | -                  | -              | -                    | 0.445                 | -              | -               | -              |
-| UMT [27]    | VBench [19]    | -               | -                  | -                  | -              | -                    | -                     | -              | 0.411           | -              |
-| GRiT [54]   | VBench [19]    | -               | -                  | -                  | -              | -                    | -                     | -              | -               | -              |
-| Tag2Text [16]| VBench [19]   | -               | -                  | -                  | -              | 0.469                | 0.545                 | -              | -               | 0.422          |
-| ComBench [46]| ComBench [46] | -               | -                  | -                  | -              | 0.611                | 0.696                 | 0.633          | 0.633           | 0.631          |
-| **Video-Bench**    | **Video-Bench**       | **0.733**       | **0.702**          | **0.402**          | **0.514**      | **0.735**            | **0.750**             | **0.718**      | **0.733**       | **0.733**      |
+| ViCLIP [53] | VBench [19]    | -               | -                  | -                  | -              | 0.445                | -                     | -              | -               | -              |
+| UMT [27]    | VBench [19]    | -               | -                  | -                  | -              | -                    | 0.411                 | -              | -               | -              |
+| GRiT [54]   | VBench [19]    | -               | -                  | -                  | -              | -                    | -                     | 0.469          | 0.545           | -              |
+| Tag2Text [16]| VBench [19]   | -               | -                  | -                  | -              | -                    | -                     | -              | -               | 0.422            |
+| ComBench [46]| ComBench [46] | -               | -                  | -                  | -              | 0.633                | 0.633                 | 0.611          | 0.696           | 0.631           |
+| **Video-Bench**    | **Video-Bench**       | **0.733**       | **0.702**          | **0.402**          | **0.514**      | **0.732**            | **0.718**             | **0.735**      | **0.750**       | **0.733**      |
 
 **Notes**:
 - Higher scores indicate better performance.
@@ -176,26 +176,26 @@ Please organize your data according to the following structure:
 
 # Instructions
 
-**Video-Bench enables video generation assessment from multiple dimensions (add description and scale to the below table)**:
-| Dimension  |  Code Path |
-|---|---|
-| Image Quality  |  `Video-Bench/staticquality.py` |
-| Aesthetic Quality  | `Video-Bench/staticquality.py`  |
-| Temporal Consistency | `Video-Bench/dynamicquality.py`  |
-| Motion Effects | `Video-Bench/dynamicquality.py` |
-| Object-Class Consistency | `Video-Bench/VideoTextConsistency.py` |
-| Video-Text Consistency | `Video-Bench/VideoTextConsistency.py` |
-| Color Consistency | `Video-Bench/VideoTextConsistency.py` |
-| Action Consistency | `Video-Bench/VideoTextConsistency.py` |
-| Scene Consistency |`Video-Bench/VideoTextConsistency.py` |
+**Video-Bench enables video generation assessment from multiple dimensions. Different dimensions apply different scoring scales to enable accurate evaluation.**
+| Dimension  | Description | scoring scale |  Code Path |
+|------------|-------------|---------------|------------|
+| Image Quality  |This metric focuses on the technical quality of individual frames.|Five-point scale|  `Video-Bench/staticquality.py` |
+| Aesthetic Quality  | the aesthetic quality of generated frames is evaluated to determine if they meet aesthetic standards and align with human perceptual expectations.|Five-point scale| `Video-Bench/staticquality.py`  |
+| Temporal Consistency |Temporal consistency is a crucial aspect of video quality that directly impacts the smoothness and naturalness of the video.|Five-point scale| `Video-Bench/dynamicquality.py`  |
+| Motion Effects |Motion quality is fundamental in distinguishing video from static images and plays a vital role in evaluating the dynamics of generated content| Five-point scale|`Video-Bench/dynamicquality.py` |
+| Object-Class Consistency | This metric evaluates whether the objects presented in the video match those described in the text prompt. |Three-point scale|`Video-Bench/VideoTextConsistency.py` |
+| Video-Text Consistency | This metric assesses the overall consistency between the video and the text prompt.|Three-point scale|`Video-Bench/VideoTextConsistency.py` |
+| Color Consistency | This metric measures whether the colors of objects in the video match those described in the text prompt.|Three-point scale|`Video-Bench/VideoTextConsistency.py` |
+| Action Consistency | This metric assesses whether the objects and actions in the video accurately reflect the descriptions in the text prompt.|Three-point scale|`Video-Bench/VideoTextConsistency.py` |
+| Scene Consistency |This metric evaluates the alignment of the generated scene with the textual prompt.|Three-point scale|`Video-Bench/VideoTextConsistency.py` |
 
 # Usage
 Run the following command to evaluate the dimension you want to evaluate:
    ````bash
    python evaluate.py \
     --dimension $DIMENSION \
-    --videos_path ./data/{dimension} \
-    --config_path ./config.json/
+    --videos_path ./data/ \
+    --config_path ./config.json
    ````
 
 # Citation

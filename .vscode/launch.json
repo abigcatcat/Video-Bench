@@ -14,7 +14,9 @@
             "args": [
                 "--dimension", "color",
                 "--videos_path", "./data/",
-                "--config_path", "./config.json"
+                "--config_path", "./config.json",
+                "--mode", "custom_input_consistency",
+                "--prompt_list", ""
             ]
         }
     ],
