@@ -46,9 +46,9 @@ def parse_args():
     parser.add_argument(
         "--mode",
         type=str,
-        default='HAbench_standard',
-        choices=['HAbench_standard', 'custom_input_consistency', 'custom_input_nonconsistency'],
-        help="evaluation mode: HAbench_standard or custom_input",
+        choices=['standard', 'custom_static', 'custom_nonstatic'],
+        default='standard',
+        help="evaluation mode to use: standard mode or custom input mode"
     )
     parser.add_argument(
         "--prompt",
@@ -90,17 +90,13 @@ def main():
         # 使用单个提示词
         prompt_list = args.prompt
 
-    kwargs = {
-        'mode': args.mode,
-        'prompt_list': prompt_list
-    }
-
     dimension_str = args.dimension[0]
     HAVBench.evaluate(
         videos_path=args.videos_path,
         name=f'results_{dimension_str}',
         dimension_list=args.dimension,
-        **kwargs
+        mode=args.mode,
+        prompt_list=prompt_list
     )
     print('done')
 

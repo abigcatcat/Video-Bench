@@ -24,41 +24,41 @@ class HABench(object):
         """Return list of all available evaluation dimensions"""
         return [
            "aesthetic_quality", "imaging_quality", "temporal_consistency", "motion_effects", 
-           "color", "object_class", "scene", "action", "overall_consistency"
+           "color", "object_class", "scene", "action", "video-text consistency"
         ]
     
     def check_dimension_requires_extra_info(self, dimension_list):
         """Check if any dimension requires extra information"""
-        VideoTextConsistency_dimensions = ['color', 'object_class', 'scene', 'action', 'overall_consistency']
+        VideoTextConsistency_dimensions = ['color', 'object_class', 'scene', 'action', 'video-text consistency']
         for dim in dimension_list:
             if dim in VideoTextConsistency_dimensions:
                 return True
         return False
     
-    def build_full_info_json(self, videos_path, name, dimension_list, prompt_list=[], special_str='', verbose=False, mode='vbench_standard', **kwargs):
+    def build_full_info_json(self, videos_path, name, dimension_list, prompt_list=[], special_str='', verbose=False, mode='standard', **kwargs):
         """Build full info JSON file containing video paths and prompts"""
         cur_full_info_list = []
         
         # 定义维度映射关系
         dimension_mapping = {
-            'aesthetic_quality': 'overall_consistency',
-            'imaging_quality': 'overall_consistency',
+            'aesthetic_quality': 'video-text consistency',
+            'imaging_quality': 'video-text consistency',
             'temporal_consistency': 'action',
             'motion_effects': 'action',
-            'overall_consistency': 'overall_consistency',
+            'video-text consistency': 'video-text consistency',
             'action': 'action',
             'color': 'color',
             'object_class': 'object_class',
             'scene': 'scene'
         }
         
-        if mode == 'custom_input_consistency':
+        if mode == 'custom_nonstatic':
             self.check_dimension_requires_extra_info(dimension_list)
             
             # 获取实际的数据目录
             actual_dimensions = set(dimension_mapping[dim] for dim in dimension_list)
             
-            # ���查videos_path下的模型目录
+            # 检查videos_path下的模型目录
             model_dirs = [d for d in os.listdir(videos_path) if os.path.isdir(os.path.join(videos_path, d))]
             
             # 如果只有一个模型目录，检查每个维度下是否只有一个视频
@@ -125,9 +125,9 @@ class HABench(object):
                         "videos": videos
                     })
         
-        elif mode == 'custom_input_nonconsistency':
+        elif mode == 'custom_static':
 
-            print('custom_input_nonconsistency')
+            print('custom_static')
 
         else:
             # Standard mode using benchmark data
@@ -189,13 +189,13 @@ class HABench(object):
         )
 
         try:
-            VideoTextConsistency_dimensions = ['color', 'object_class', 'scene', 'action', 'overall_consistency']
+            VideoTextAlignment_dimensions = ['color', 'object_class', 'scene', 'action', 'video-text consistency']
             static_dimensions = ['aesthetic_quality', 'imaging_quality']
             dynamic_dimensions = ['temporal_consistency', 'motion_effects']
 
             from .prompt_dict import prompt
 
-            if dimension in VideoTextConsistency_dimensions:
+            if dimension in VideoTextAlignment_dimensions:
                 from .VideoTextAlignment import eval
                 results = eval(self.config, prompt[dimension], dimension, cur_full_info_path)
             
@@ -204,7 +204,7 @@ class HABench(object):
                 results = eval(self.config, prompt[dimension], dimension, cur_full_info_path)
             
             elif dimension in dynamic_dimensions:
-                if mode == 'custom_input_consistency':
+                if mode == 'custom_nonstatic':
                     # 自定义模式使用 gridview 的评估函数
                     from .dynamicquality_gridview_customized import eval
                 else:
@@ -221,7 +221,7 @@ class HABench(object):
             print(f"Error evaluating {dimension}: {e}")
             return {'error': str(e)}
 
-    def evaluate(self, videos_path, name, dimension_list=None, prompt_list=[], mode='vbench_standard', **kwargs):
+    def evaluate(self, videos_path, name, dimension_list=None, mode='standard', prompt_list=[], **kwargs):
         """
         Run evaluation on specified dimensions
         
@@ -257,8 +257,8 @@ class HABench(object):
             os.makedirs(dimension_output_dir, exist_ok=True)
             
             # 保存结果
-            VideoTextConsistency_dimensions = ['color', 'object_class', 'scene', 'action', 'overall_consistency']
-            if dimension in VideoTextConsistency_dimensions:
+            VideoTextAlignment_dimensions = ['color', 'object_class', 'scene', 'action', 'video-text consistency']
+            if dimension in VideoTextAlignment_dimensions:
                 save_json(dimension_results['history'], os.path.join(dimension_output_dir, f'{name}_history_results.json'))
                 save_json(dimension_results['updated_description'], os.path.join(dimension_output_dir, f'{name}_updated_description_results.json'))
                 save_json(dimension_results['score'], os.path.join(dimension_output_dir, f'{name}_score_results.json'))
