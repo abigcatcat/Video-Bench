@@ -54,6 +54,7 @@ def parse_args():
         default='standard',
         help="evaluation mode to use: standard mode or custom input mode"
     )
+
     
     parser.add_argument(
         "--full_json_dir",
@@ -83,7 +84,13 @@ def parse_args():
         ** This option must be used with --mode=custom_input flag
         """
     )
-
+    parser.add_argument(
+        "--models",
+        nargs='+',
+        default=[],
+        help="list of model names to evaluate"
+    )
+    args = parser.parse_args()
     return parser.parse_args()
 
 def main():
@@ -111,6 +118,7 @@ def main():
             name=f'results_{dimension_str}',
             dimension_list=args.dimension,
             mode=args.mode,
+             models=args.models,
             prompt_list=prompt_list
         )
         print(f"\nEvaluation completed successfully!")

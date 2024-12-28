@@ -70,6 +70,12 @@ def parse_args():
         ** This option must be used with --mode=custom_input flag
         """
     )
+    parser.add_argument(
+        "--models",
+        nargs='+',
+        default=[],
+        help="list of model names to evaluate"
+    )
     args = parser.parse_args()
     return args
 
