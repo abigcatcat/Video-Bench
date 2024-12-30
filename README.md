@@ -237,6 +237,18 @@ HAbench \
 ## Custom Mode
 This mode allows users to evaluate videos generated from prompts that are not included in the Video-Bench prompt suite.
 
+You can provide prompts in two ways:
+1. Single prompt: Use `--prompt "your customized prompt"` to specify a single prompt.
+
+2. Multiple prompts: Create a JSON file and use `--prompt_file $json_path`. Create a JSON file containing your prompts and use --prompt_file $json_path to load them. The JSON file can follow this format:
+```python
+{
+    0: "prompt1",
+    1: "prompt2",
+    ...
+}
+```
+
 #### For [static quality](#static-quality) dimensions, `set mode=custom_static`:
 ```bash
 python evaluate.py \
