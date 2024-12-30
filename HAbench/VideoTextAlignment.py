@@ -288,7 +288,7 @@ def extract_content_from_result(final_result):
 
     return content_des, content_score
 
-def eval(config, prompt, dimension, cur_full_info_path):
+def eval(config, prompt, dimension, cur_full_info_path,models):
     """
     Evaluate video-text consistency
     
@@ -324,8 +324,9 @@ def eval(config, prompt, dimension, cur_full_info_path):
 
         # 动态获取模型列表
         available_models = list(data['frames'].keys())
+        models_to_process = models if models else available_models
         
-        for modelname in available_models:
+        for modelname in models_to_process:
             # 为自定义模型创建消息
             modelmessage = f"{len(data['frames'][modelname])} frames from {modelname}."
             

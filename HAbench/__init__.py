@@ -72,7 +72,7 @@ class HABench(object):
                     dimension_path = os.path.join(videos_path, actual_dim)
                     if os.path.exists(dimension_path):
                         # 只处理指定的模型
-                        available_models = models if models else os.listdir(dimension_path)
+                        available_models = [name for name in os.listdir(dimension_path) if os.path.isdir(os.path.join(dimension_path, name))]
                         for model_name in available_models:
                             model_path = os.path.join(dimension_path, model_name)
                             if os.path.isdir(model_path):
@@ -94,6 +94,9 @@ class HABench(object):
                         })
         
         elif mode == 'custom_static':
+            if not models:
+                raise ValueError("The 'models' parameter cannot be empty. Please specify at least one model to evaluate.")
+
             # 获取实际的数据目录
             actual_dimensions = set(dimension_mapping[dim] for dim in dimension_list)
             
@@ -121,6 +124,7 @@ class HABench(object):
                     return SequenceMatcher(None, a, b).ratio()
                 
                 prompt_similar = max(all_prompts, key=lambda x: similar(x, prompt))
+                print(f"Most similar prompt to '{prompt}': {prompt_similar}")
                 
                 videos_dict = {}
                 # 遍历每个维度目录
@@ -128,27 +132,34 @@ class HABench(object):
                     dimension_path = os.path.join(videos_path, actual_dim)
                     if os.path.exists(dimension_path):
                         # 遍历每个模型目录
-                        available_models = models if models else os.listdir(dimension_path)
+                        available_models = [name for name in os.listdir(dimension_path) if os.path.isdir(os.path.join(dimension_path, name))]
                         for model_name in available_models:
                             model_path = os.path.join(dimension_path, model_name)
+                            
+                            # 检查是否是有效目录
                             if not os.path.isdir(model_path):
                                 print(f"Warning: Model directory {model_path} not found, skipping...")
                                 continue
-                            if os.path.isdir(model_path):
-                                video_files = [f for f in os.listdir(model_path) if Path(f).suffix.lower() in ['.mp4', '.gif', '.jpg', '.png']]
-                                
-                                # 检查是否有与输入 prompt 完全匹配的视频
-                                exact_matches = [f for f in video_files if prompt in get_prompt_from_filename(f)]
-                                if exact_matches:
-                                    # 使用完全匹配的视频
+
+                            # 获取模型目录中的所有视频文件
+                            video_files = [f for f in os.listdir(model_path) if Path(f).suffix.lower() in ['.mp4', '.gif', '.jpg', '.png']]
+
+                            # 优先检查完全匹配的视频
+                            exact_matches = [f for f in video_files if prompt in get_prompt_from_filename(f)]
+                            if exact_matches:
+                                # 如果找到完全匹配的视频，检查模型是否在 models 中
+                                if model_name in models:
                                     video_path = os.path.join(dimension_path, model_name, exact_matches[0])
                                     videos_dict[model_name] = os.path.abspath(video_path).replace("\\", "/")
-                                else:
-                                    # 使用与相似 prompt 匹配的视频
-                                    similar_matches = [f for f in video_files if prompt_similar in get_prompt_from_filename(f)]
-                                    if similar_matches:
-                                        video_path = os.path.join(dimension_path, model_name, similar_matches[0])
-                                        videos_dict[model_name] = os.path.abspath(video_path).replace("\\", "/")
+                                # 跳过不在 models 中的模型
+                                continue
+
+                            # 如果没有完全匹配的视频，查找与 prompt_similar 相似的视频
+                            similar_matches = [f for f in video_files if prompt_similar in get_prompt_from_filename(f)]
+                            if similar_matches:
+                                video_path = os.path.join(dimension_path, model_name, similar_matches[0])
+                                videos_dict[model_name] = os.path.abspath(video_path).replace("\\", "/")
+
                 
                 if videos_dict:
                     cur_full_info_list.append({
@@ -175,8 +186,8 @@ class HABench(object):
                     for actual_dim in actual_dimensions:
                         dimension_path = os.path.join(videos_path, actual_dim)
                         if os.path.exists(dimension_path):
-                            # 只处理指定的模型
-                            available_models = models if models else os.listdir(dimension_path)
+                            # 处理当前目录下的模型
+                            available_models = [name for name in os.listdir(dimension_path) if os.path.isdir(os.path.join(dimension_path, name))]
                             for model_name in available_models:
                                 model_path = os.path.join(dimension_path, model_name)
                                 if os.path.isdir(model_path):
@@ -227,24 +238,25 @@ class HABench(object):
 
             if dimension in VideoTextAlignment_dimensions:
                 from .VideoTextAlignment import eval
-                results = eval(self.config, prompt[dimension], dimension, cur_full_info_path)
+                results = eval(self.config, prompt[dimension], dimension, cur_full_info_path,models)
             
             elif dimension in static_dimensions:
                 if mode == 'custom_static':
                     from .staticquality_customized import eval
-                    results = eval(self.config, prompt[dimension], dimension, cur_full_info_path,models=models)
+                    results = eval(self.config, prompt[dimension], dimension, cur_full_info_path,models)
                 else:
                     from .staticquality import eval
-                    results = eval(self.config, prompt[dimension], dimension, cur_full_info_path)
+                    results = eval(self.config, prompt[dimension], dimension, cur_full_info_path,models)
             
             elif dimension in dynamic_dimensions:
                 if mode == 'custom_nonstatic':
                     # 自定义模式使用 gridview 的评估函数
                     from .dynamicquality_gridview_customized import eval
+                    results = eval(self.config, prompt[dimension], dimension, cur_full_info_path,models)
                 else:
                     # 标准模式使用原来的评估函数
                     from .dynamicquality import eval
-                results = eval(self.config, prompt[dimension], dimension, cur_full_info_path)
+                    results = eval(self.config, prompt[dimension], dimension, cur_full_info_path)
             
             else:
                 raise ValueError(f"Unknown dimension: {dimension}")

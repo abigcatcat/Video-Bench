@@ -16,7 +16,7 @@ def call_api(client, messages, model):
     )
     return response.choices[0].message.content
 
-def eval(config, prompt, dimension, cur_full_info_path):
+def eval(config, prompt, dimension, cur_full_info_path,models):
     """
     Evaluate videos using OpenAI API
     Args:
@@ -55,9 +55,10 @@ def eval(config, prompt, dimension, cur_full_info_path):
             prompten = data['prompt']
             results[i] = {}
             available_models = list(data['frames'].keys())
+            models_to_process = models if models else available_models
 
             # 构建包含所有模型帧的消息
-            for modelname in available_models:
+            for modelname in models_to_process:
 
                 messages = [
                     {

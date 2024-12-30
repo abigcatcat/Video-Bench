@@ -118,7 +118,7 @@ def main():
             name=f'results_{dimension_str}',
             dimension_list=args.dimension,
             mode=args.mode,
-             models=args.models,
+            models=args.models,
             prompt_list=prompt_list
         )
         print(f"\nEvaluation completed successfully!")

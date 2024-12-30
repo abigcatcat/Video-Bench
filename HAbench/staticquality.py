@@ -7,7 +7,7 @@ import logging
 from tenacity import retry, stop_after_attempt, wait_random_exponential
 
 
-def eval(config, prompt, dimension, cur_full_info_path):
+def eval(config, prompt, dimension, cur_full_info_path,models):
     # 设置日志
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
@@ -35,8 +35,9 @@ def eval(config, prompt, dimension, cur_full_info_path):
         
         # 获取当前数据中的所有模型
         available_models = list(data['frames'].keys())
+        models_to_process = models if models else available_models
         
-        for modelname in available_models:
+        for modelname in models_to_process:
             try:
                 # 获取其他模型作为示例
                 examplemodels = [x for x in available_models if x != modelname]

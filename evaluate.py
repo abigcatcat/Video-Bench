@@ -95,13 +95,14 @@ def main():
     elif args.prompt != "None":
         # 使用单个提示词
         prompt_list = args.prompt
-
+    print(f'prompt_list: {prompt_list}')
     dimension_str = args.dimension[0]
     HAVBench.evaluate(
         videos_path=args.videos_path,
         name=f'results_{dimension_str}',
         dimension_list=args.dimension,
         mode=args.mode,
+        models=args.models,
         prompt_list=prompt_list
     )
     print('done')
