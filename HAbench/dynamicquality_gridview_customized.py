@@ -1,4 +1,5 @@
 import os
+import re
 from openai import OpenAI
 import openai
 from .utils import Video_Dataset
@@ -41,6 +42,7 @@ def eval(config, prompt, dimension, cur_full_info_path,models):
     MODEL = "gpt-4o-2024-08-06"
 
     results = {}
+    model_scores = {}
     dataset = Video_Dataset(cur_full_info_path)
     
     usrmessages ={'temporal_consistency':'temporal consistency', 'motion_effects':'motion effects'}
@@ -48,18 +50,23 @@ def eval(config, prompt, dimension, cur_full_info_path,models):
 
     l1 = list(range(0, len(dataset)))
     for i in l1:
-        try:
-            logger.info(f'Processing video {i}...')
-            data = dataset[i]
-            frames = data['grid_frames']
-            prompten = data['prompt']
-            results[i] = {}
-            available_models = list(data['frames'].keys())
-            models_to_process = models if models else available_models
+        
+        logger.info(f'Processing video {i}...')
+        data = dataset[i]
+        frames = data['grid_frames']
+        prompten = data['prompt']
+        results[i] = {}
+        results[i]['prompt_en'] = prompten
+        available_models = list(data['frames'].keys())
+        models_to_process = models if models else available_models
 
-            # 构建包含所有模型帧的消息
-            for modelname in models_to_process:
+        # 构建包含所有模型帧的消息
+        for modelname in models_to_process:
 
+            if modelname not in model_scores:
+                model_scores[modelname] = {'total_score': 0, 'count': 0}
+
+            try:
                 messages = [
                     {
                         "role": "system",
@@ -80,14 +87,27 @@ def eval(config, prompt, dimension, cur_full_info_path,models):
                 ]
 
                 response = call_api(client, messages, MODEL)
-                results[i][modelname] = response
-                logger.info(f'>>>>>>>Model {modelname} evaluation:\n{response}')
+                logger.info(f'>>>>>>>This is the {i} round >>>>>>evaluation results>>>>>>:\n{response}\n')
 
-        except Exception as e:
-            logger.error(f'Error evaluating model {modelname}: {str(e)}')
-            results[i][modelname] = 'Error'
+                match = re.search(r':\s*(\d+)', response)
+                if match:
+                    video_score = int(match.group(1))
+                else:
+                    video_score = 'Error'
+                results[i][modelname] = video_score
 
+                 # 将最终评分累加到模型总分中
+                model_scores[modelname]['total_score'] += video_score
+                model_scores[modelname]['count'] += 1
+                
+            except Exception as e:
+                logger.error(f'Error evaluating model {modelname}: {str(e)}')
+                results[i][modelname] = 'Error'
+
+    average_scores = {model: model_scores[model]['total_score'] / model_scores[model]['count']
+                  for model in model_scores if model_scores[model]['count'] > 0}
 
     return {
-        'score': results
+        'score': results,
+        'average_scores': average_scores  # 每个模型的平均分
     }

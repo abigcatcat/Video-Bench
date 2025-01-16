@@ -95,7 +95,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    os.makedirs(args.output_path, exist_ok=True)
+    os.makedirs(args.log_path, exist_ok=True)
 
     # 处理 prompt
     prompt_list = {}

@@ -249,10 +249,10 @@ class Host():
 
 # 处理输出结果，按指定格式提取所需内容
 def extract_content_from_result(final_result):
-    valid_start_letters = ['l', 'p', 'k', 'v', 'g', 's', 'c']
     content_des = ""
-    extracted_content = ""
+    content_score = "None"  # 初始化为 "error"
     start_index = final_result.find("Updated Video Description")
+    
     if start_index != -1:
         # 提取 "Updated Video Description" 后面的内容
         all_content = final_result[start_index + len("Updated Video Description"):].strip()
@@ -265,28 +265,35 @@ def extract_content_from_result(final_result):
         while True:
             eval_result_index = all_content.find("Evaluation Result")
             if eval_result_index != -1:
-                content_des = all_content[:eval_result_index].strip()
+                # 提取描述部分
+                # content_des = all_content[:eval_result_index].strip()
                 remaining_content = all_content[eval_result_index + len("Evaluation Result"):].strip()
 
-                for a, char in enumerate(remaining_content):
-                    if char.isalpha() and char.lower() in valid_start_letters:
-                        content_score = remaining_content[a:].strip()
+                # 查找 "because"
+                because_index = remaining_content.find("because")
+                if because_index != -1:
+                    # 提取 "because" 前的内容
+                    before_because = remaining_content[:because_index].strip()
+
+                    # 找到离 "because" 最近的数字
+                    for i in range(len(before_because) - 1, -1, -1):
+                        if before_because[i].isdigit():
+                            content_score = int(before_because[i])
+                            break
+
+                    # 如果找到评分，则退出循环
+                    if content_score != "error":
                         break
                 else:
-                    content_score = ""
-
-                if content_score:
-                    print(content_score)
+                    print("未找到 'because'")
                     break
-                else:
-                    all_content = all_content[eval_result_index + len("Evaluation Result"):].strip()
             else:
                 print("未找到更多 'Evaluation Result' 部分")
                 break
     else:
         print("未找到 'Updated Video Description' 部分")
 
-    return content_des, content_score
+    return content_score
 
 def eval(config, prompt, dimension, cur_full_info_path,models):
     """
@@ -311,33 +318,37 @@ def eval(config, prompt, dimension, cur_full_info_path,models):
     
     index = 0
     score = {}
-    up_des = {}
     history = {}
+    model_scores = {}
 
     l1 = list(range(0, len(dataset)))
     for i in l1:
         data = dataset[i]
+        modelmessage = f"{len(data['frames'][modelname])} frames from {modelname}."
+            
+        agents = [Agent('Assistant-one', logger, prompt, config), 
+                    Agent('Assistant-two', logger, prompt, config)]
+        host = Host('Host', logger, prompt, config, modelname, modelmessage, agents)
+        
+        for agent in agents:
+            agent.video_prompt = data['prompt']
+        host.video_prompt = data['prompt']
+        host.frames = data['frames']
         
         score[i] = {}
-        up_des[i] = {}
         history[i] = {}
+        score[i]['prompt_en'] = data['prompt']
 
         # 动态获取模型列表
         available_models = list(data['frames'].keys())
         models_to_process = models if models else available_models
         
         for modelname in models_to_process:
+
+            if modelname not in model_scores:
+                model_scores[modelname] = {'total_score': 0, 'count': 0}
+
             # 为自定义模型创建消息
-            modelmessage = f"{len(data['frames'][modelname])} frames from {modelname}."
-            
-            agents = [Agent('Assistant-one', logger, prompt, config), 
-                     Agent('Assistant-two', logger, prompt, config)]
-            host = Host('Host', logger, prompt, config, modelname, modelmessage, agents)
-            
-            for agent in agents:
-                agent.video_prompt = data['prompt']
-            host.video_prompt = data['prompt']
-            host.frames = data['frames']
 
             logger.info(f'>>>>>>>>This is the {i}_{modelname} round>>>>>>>')
             try:
@@ -356,13 +367,15 @@ def eval(config, prompt, dimension, cur_full_info_path,models):
                     'qa_history': questions,
                     'final_result': final_result
                 }
-                logger.info(f'>>>>>>>the {i}_{modelname} round >>>>>>Discussion and judge:\n' + final_result)
+                logger.info(f'>>>>>>>the {i}_{modelname} round >>>>>>Discussion and judge:\n' + final_result +'\n')
 
                 # 处理格式以写入json 
-                content_des, content_score = extract_content_from_result(final_result)
-
-                up_des[i][modelname] = content_des
+                content_score = extract_content_from_result(final_result)
                 score[i][modelname] = content_score
+
+                # 将最终评分累加到模型总分中
+                model_scores[modelname]['total_score'] += content_score
+                model_scores[modelname]['count'] += 1
 
             except Exception as e:
                 logger.info('>>>>>>>>>>>Error occurred during conversation...')
@@ -374,9 +387,12 @@ def eval(config, prompt, dimension, cur_full_info_path,models):
                 agent.reset()
             host.reset()
 
+    average_scores = {model: model_scores[model]['total_score'] / model_scores[model]['count']
+                  for model in model_scores if model_scores[model]['count'] > 0}
+
     return {
         'history': history,  # 评估历史记录
-        'updated_description': up_des,  # 视频最终描述
-        'score': score         # 最终评分结果
+        'score': score ,        # 最终评分结果
+        'average_scores': average_scores  # 每个模型的平均分
     }
 

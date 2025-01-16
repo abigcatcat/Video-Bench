@@ -83,6 +83,7 @@ def parse_args():
 def main():
     args = parse_args()
     HAVBench = HABench(args.full_json_dir, args.output_path, args.config_path)
+    os.makedirs(args.log_path, exist_ok=True)
 
     # 处理提示词
     prompt_list = {}
@@ -95,7 +96,7 @@ def main():
     elif args.prompt != "None":
         # 使用单个提示词
         prompt_list = args.prompt
-    print(f'prompt_list: {prompt_list}')
+  
     dimension_str = args.dimension[0]
     HAVBench.evaluate(
         videos_path=args.videos_path,

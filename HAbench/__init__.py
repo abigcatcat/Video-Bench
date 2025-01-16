@@ -35,7 +35,7 @@ class HABench(object):
                 return True
         return False
     
-    def build_full_info_json(self, videos_path, name, dimension_list, prompt_list=[], special_str='', verbose=False, mode='standard', models=[], **kwargs):
+    def build_full_info_json(self, videos_path, name, dimension_list, prompt_list=[], special_str='', verbose=True, mode='standard', models=[], **kwargs):
         """Build full info JSON file containing video paths and prompts"""
         cur_full_info_list = []
         
@@ -64,7 +64,7 @@ class HABench(object):
                 prompts_to_process.extend(prompt_list.values())
             else:
                 prompts_to_process.extend(prompt_list)
-            
+            print(f"Prompts to process: {prompts_to_process}")
             for prompt in prompts_to_process:
                 videos_by_prompt = {}
                 
@@ -188,26 +188,50 @@ class HABench(object):
                         if os.path.exists(dimension_path):
                             # 处理当前目录下的模型
                             available_models = [name for name in os.listdir(dimension_path) if os.path.isdir(os.path.join(dimension_path, name))]
+                            # 初始化后缀分组
+                            suffix_videos = {idx: {} for idx in range(3)}  # 用于存储 _0, _1, _2 的分组
+                            no_suffix_videos = {}  # 用于存储没有后缀的视频
                             for model_name in available_models:
                                 model_path = os.path.join(dimension_path, model_name)
                                 if os.path.isdir(model_path):
-                                    # 检查三个索引的视频
-                                    for idx in range(3):
-                                        video_name = f"{prompt}_{idx}.mp4"
-                                        video_path = os.path.join(dimension_path, model_name, video_name)
-                                        if os.path.exists(video_path):
-                                            videos_dict[model_name] = video_path.replace("\\", "/")
-                                            if verbose:
-                                                print(f'Successfully found video: {video_path}')
-                                        elif verbose:
-                                            print(f'Error!!! Required video not found: {video_path}')
-                    
-                    if videos_dict:  # 只有当找到视频时才添加到列表中
-                        cur_full_info_list.append({
-                            "prompt_en": prompt,
-                            "dimension": dimension_list,
-                            "videos": videos_dict
-                        })
+                                    # 首先检查无后缀的视频
+                                    no_suffix_video_name = f"{prompt}.mp4"
+                                    no_suffix_video_path = os.path.join(dimension_path, model_name, no_suffix_video_name)
+                                    
+                                    if os.path.exists(no_suffix_video_path):
+                                        no_suffix_videos[model_name] = no_suffix_video_path.replace("\\", "/")
+                                        # if verbose:
+                                        #     print(f'Successfully found video without suffix: {no_suffix_video_path}')
+                                    else:
+                                        # 检查带后缀的视频
+                                        for idx in range(3):
+                                            video_name = f"{prompt}_{idx}.mp4"
+                                            video_path = os.path.join(dimension_path, model_name, video_name)
+                                            
+                                            if os.path.exists(video_path):
+                                                # 将视频路径存入对应的后缀分组
+                                                suffix_videos[idx][model_name] = video_path.replace("\\", "/")
+                                                # if verbose:
+                                                #     print(f'Successfully found video: {video_path}')
+                                            elif verbose:
+                                                print(f'Error!!! Required video not found: {video_path}')
+                            
+                            # 如果存在无后缀的视频，优先添加到 cur_full_info_list
+                            if no_suffix_videos:
+                                cur_full_info_list.append({
+                                    "prompt_en": prompt,
+                                    "dimension": dimension_list,
+                                    "videos": no_suffix_videos
+                                })
+                            
+                            # 将每个后缀的分组信息添加到 cur_full_info_list
+                            for idx, videos_dict in suffix_videos.items():
+                                if videos_dict:  # 确保分组中有视频
+                                    cur_full_info_list.append({
+                                        "prompt_en": prompt,
+                                        "dimension": dimension_list,
+                                        "videos": videos_dict
+                                    })
 
         cur_full_info_path = os.path.join(self.output_path, name+'_full_info.json')
         save_json(cur_full_info_list, cur_full_info_path)
@@ -256,7 +280,7 @@ class HABench(object):
                 else:
                     # 标准模式使用原来的评估函数
                     from .dynamicquality import eval
-                    results = eval(self.config, prompt[dimension], dimension, cur_full_info_path)
+                    results = eval(self.config, prompt[dimension], dimension, cur_full_info_path,models)
             
             else:
                 raise ValueError(f"Unknown dimension: {dimension}")
@@ -308,11 +332,19 @@ class HABench(object):
             VideoTextAlignment_dimensions = ['color', 'object_class', 'scene', 'action', 'video-text consistency']
             if dimension in VideoTextAlignment_dimensions:
                 save_json(dimension_results['history'], os.path.join(dimension_output_dir, f'{name}_history_results.json'))
-                save_json(dimension_results['updated_description'], os.path.join(dimension_output_dir, f'{name}_updated_description_results.json'))
-                save_json(dimension_results['score'], os.path.join(dimension_output_dir, f'{name}_score_results.json'))
-            else:
-                save_json(dimension_results['score'], os.path.join(dimension_output_dir, f'{name}_score_results.json'))
             
+                combined_scores = {
+                "average_scores": dimension_results.get("average_scores", {}),
+                "scores": dimension_results.get("score", {})
+                }
+                save_json(combined_scores, os.path.join(dimension_output_dir, f'{name}_score_results.json'))
+            else:
+                combined_scores = {
+                "average_scores": dimension_results.get("average_scores", {}),
+                "scores": dimension_results.get("score", {})
+                }
+                save_json(combined_scores, os.path.join(dimension_output_dir, f'{name}_score_results.json'))
+
             results[dimension] = dimension_results
         
         return results
