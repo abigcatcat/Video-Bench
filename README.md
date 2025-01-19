@@ -289,11 +289,11 @@ HAbench \
  --models modelname1 modelname2
 ```
 
-### Videos and Annotations
+## Videos and Annotations
 
 You can obtain the video data and human annotations in two ways:
 
-#### Option 1: Download from Hugging Face
+### Option 1: Download from Hugging Face
 - Videos dataset: [Video-Bench/Video-Bench_videos](https://huggingface.co/datasets/Video-Bench/Video-Bench_videos)
 - Human annotations: [Video-Bench/Video-Bench_human_annotation](https://huggingface.co/datasets/Video-Bench/Video-Bench_human_annotation)
 
@@ -304,7 +304,7 @@ git clone https://huggingface.co/datasets/Video-Bench/Video-Bench_videos
 git clone https://huggingface.co/datasets/Video-Bench/Video-Bench_human_annotation
 ```
 
-#### Option 2: Local Directory
+### Option 2: Local Directory
 The human annotations can also be found in the local directory:
 ```
 ./data/human_anno/
