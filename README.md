@@ -45,6 +45,7 @@ HABench is a benchmark tool designed to systematically leverage MLLMs across all
 - [Usage](#usage)
    - [Standard Mode](#standard-mode)
    - [Custom Mode](#custom-mode)
+   - [Videos and Annotations](#videos-and-annotations)
 - [Citation](#Citation)
 - [Literature](#literature)
 
@@ -122,11 +123,11 @@ HABench is a benchmark tool designed to systematically leverage MLLMs across all
 ## Download From Huggingface
 
    ````bash
-   wget https://huggingface.co/Video-Bench/Video-Bench -O ./pytorch_model.bin
+   wget https://huggingface.co/Video-Bench/Video-Bench 
    ````
    or
    ````bash
-   curl -L https://huggingface.co/Video-Bench/Video-Bench -o ./pytorch_model.bin
+   curl -L https://huggingface.co/Video-Bench/Video-Bench 
    ````
 
 # Preparation
@@ -286,6 +287,27 @@ HAbench \
  --mode custom_static \
  --config_path ./config.json \
  --models modelname1 modelname2
+```
+
+### Videos and Annotations
+
+You can obtain the video data and human annotations in two ways:
+
+#### Option 1: Download from Hugging Face
+- Videos dataset: [Video-Bench/Video-Bench_videos](https://huggingface.co/datasets/Video-Bench/Video-Bench_videos)
+- Human annotations: [Video-Bench/Video-Bench_human_annotation](https://huggingface.co/datasets/Video-Bench/Video-Bench_human_annotation)
+
+```bash
+# Download videos
+git clone https://huggingface.co/datasets/Video-Bench/Video-Bench_videos
+# Download annotations  
+git clone https://huggingface.co/datasets/Video-Bench/Video-Bench_human_annotation
+```
+
+#### Option 2: Local Directory
+The human annotations can also be found in the local directory:
+```
+./data/human_anno/
 ```
 
 # Citation
