@@ -310,6 +310,9 @@ The human annotations can also be found in the local directory:
 ./data/human_anno/
 ```
 
+#### Additional Information  
+- Manual annotation is conducted via a web interface, accessible at [https://github.com/Chenzhou2344/AnnoBoard.git].  
+
 # Citation
 If you use our dataset, code or find Video-Bench useful, please cite our paper in your work as:
 
